@@ -10,3 +10,7 @@ fun String.toDrawableResourceName(): String {
     return this.lowercase()
         .replace(Regex("[^a-z0-9]"), "")
 }
+
+fun getThumbnailCacheKey(siteId: Long): String {
+    return "site_${siteId}_thumbnail"
+}

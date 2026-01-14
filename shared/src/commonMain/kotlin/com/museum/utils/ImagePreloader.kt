@@ -9,6 +9,7 @@ import kotlinx.coroutines.IO
 import kotlinx.coroutines.async
 import kotlinx.coroutines.awaitAll
 import kotlinx.coroutines.withContext
+import com.museum.utils.toDrawableResourceName
 
 class ImagePreloader(
     private val context: PlatformContext,
@@ -27,7 +28,7 @@ class ImagePreloader(
         // Preload images in parallel for maximum speed
         val jobs = (startIndex..endIndex).mapNotNull { i ->
             val site = sites.getOrNull(i) ?: return@mapNotNull null
-            val cacheKey = "site_${site.id}"
+            val cacheKey = getThumbnailCacheKey(site.id)
 
             // Skip if already preloaded
             if (preloadedItems.contains(cacheKey)) return@mapNotNull null
@@ -53,7 +54,7 @@ class ImagePreloader(
                     val request = ImageRequest.Builder(context)
                         .data(data)
                         .size(800, 800) // Decode at smaller size to reduce memory pressure
-                        .memoryCacheKey("site_${site.id}_thumbnail")
+                        .memoryCacheKey(cacheKey)
                         .diskCachePolicy(coil3.request.CachePolicy.DISABLED) // Don't write decoded bitmap to disk cache
                         .memoryCachePolicy(coil3.request.CachePolicy.ENABLED) // Store decoded bitmap in memory
                         .build()

@@ -4,6 +4,7 @@ import coil3.ImageLoader
 import coil3.PlatformContext
 import coil3.annotation.ExperimentalCoilApi
 import com.museum.data.local.MuseumDatabaseWrapper
+import com.museum.data.repository.IMuseumRepository
 import com.museum.data.repository.MuseumRepository
 import com.museum.domain.usecases.GetSitesUseCase
 import com.museum.domain.usecases.SearchSiteUseCase
@@ -16,8 +17,8 @@ val commonModule = module {
     // Database - Singleton
     single { MuseumDatabaseWrapper(get()) }
 
-    // Repository - Singleton
-    single { MuseumRepository(get()) }
+    // Repository - bind to interface to enable testing and decoupling
+    single<IMuseumRepository> { MuseumRepository(get()) }
 
     // Use Cases - Factory (lightweight, can be created each time)
     factory { GetSitesUseCase(get()) }

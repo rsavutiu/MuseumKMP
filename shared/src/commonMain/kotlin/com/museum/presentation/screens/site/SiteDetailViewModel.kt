@@ -1,6 +1,7 @@
 ﻿package com.museum.presentation.screens.site
 
 import com.museum.data.models.HeritageSite
+import com.museum.data.repository.IMuseumRepository
 import com.museum.data.repository.MuseumRepository
 import com.museum.domain.usecases.ToggleFavoriteUseCase
 import kotlinx.coroutines.CoroutineScope
@@ -9,7 +10,7 @@ import kotlinx.coroutines.launch
 
 class SiteDetailViewModel(
     private val siteId: Long,
-    private val repository: MuseumRepository,
+    private val repository: IMuseumRepository,
     private val toggleFavoriteUseCase: ToggleFavoriteUseCase,
     private val coroutineScope: CoroutineScope
 ) {

@@ -25,7 +25,7 @@ import com.museum.data.models.HeritageSite
 import com.museum.utils.getBackgroundColor
 import com.museum.utils.getCardBackgroundColor
 import com.museum.utils.getDrawableResourceId
-import com.museum.utils.toDrawableResourceName
+import com.museum.utils.getThumbnailCacheKey
 
 @Composable
 fun SiteCard(
@@ -57,7 +57,7 @@ fun SiteCard(
                     .clip(RoundedCornerShape(8.dp))
                     .background(site.getBackgroundColor())
             ) {
-                val drawableId = getDrawableResourceId(site.name.toDrawableResourceName())
+                val drawableId = getDrawableResourceId(site.name)
 
                 // Use local drawable first, fallback to URL for thumbnails
                 val imageModel = if (drawableId != 0) {
@@ -71,7 +71,7 @@ fun SiteCard(
                     model = ImageRequest.Builder(context)
                         .data(imageModel)
                         .size(800, 800) // Match preloader size for cache hit
-                        .memoryCacheKey("site_${site.id}_thumbnail")
+                        .memoryCacheKey(getThumbnailCacheKey(site.id))
                         .diskCachePolicy(coil3.request.CachePolicy.DISABLED) // Only use memory cache
                         .memoryCachePolicy(coil3.request.CachePolicy.ENABLED)
                         .build(),
