@@ -3,6 +3,7 @@
 import com.museum.data.models.HeritageSite
 import com.museum.data.repository.IMuseumRepository
 import com.museum.data.repository.MuseumRepository
+import com.museum.domain.model.Result
 import com.museum.domain.usecases.ToggleFavoriteUseCase
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.flow.*
@@ -24,15 +25,20 @@ class SiteDetailViewModel(
     private fun loadSite() {
         coroutineScope.launch {
             repository.getSiteById(siteId)
-                .catch { e ->
-                    _uiState.value = SiteDetailUiState.Error(e.message ?: "Unknown error")
-                }
-                .collect { site ->
-                    if (site != null) {
-                        repository.markAsViewed(siteId)
-                        _uiState.value = SiteDetailUiState.Success(site)
-                    } else {
-                        _uiState.value = SiteDetailUiState.Error("Site not found")
+                .collect { result ->
+                    _uiState.value = when (result) {
+                        is Result.Success -> {
+                            val site = result.data
+                            if (site != null) {
+                                repository.markAsViewed(siteId)
+                                SiteDetailUiState.Success(site)
+                            } else {
+                                SiteDetailUiState.Error("Site not found")
+                            }
+                        }
+                        is Result.Error -> {
+                            SiteDetailUiState.Error(result.exception.message ?: "Unknown error")
+                        }
                     }
                 }
         }

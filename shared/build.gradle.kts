@@ -43,6 +43,15 @@ kotlin {
             }
         }
 
+        val commonTest by getting {
+            dependencies {
+                implementation(kotlin("test"))
+                implementation(libs.kotlinx.coroutines.test)
+                implementation(libs.mockk)
+                implementation(libs.turbine)
+            }
+        }
+
         val androidMain by getting {
             dependencies {
                 implementation(libs.sqldelight.driver.android)

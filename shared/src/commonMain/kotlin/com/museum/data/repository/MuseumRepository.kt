@@ -1,30 +1,71 @@
 ﻿package com.museum.data.repository
 
-import com.museum.data.local.MuseumDatabaseWrapper
+import com.museum.data.datasource.HeritageSiteLocalDataSource
+import com.museum.data.mapper.HeritageSiteMapper.toHeritageSite
+import com.museum.data.mapper.HeritageSiteMapper.toHeritageSites
 import com.museum.data.models.HeritageSite
+import com.museum.domain.model.Result
 import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.catch
+import kotlinx.coroutines.flow.map
 
 /**
- * Concrete implementation backed by MuseumDatabaseWrapper.
+ * Concrete implementation backed by HeritageSiteLocalDataSource.
  * Implements IMuseumRepository so higher layers depend on the interface.
  */
-class MuseumRepository(private val database: MuseumDatabaseWrapper) : IMuseumRepository {
+class MuseumRepository(private val dataSource: HeritageSiteLocalDataSource) : IMuseumRepository {
 
-    override fun getAllSites(): Flow<List<HeritageSite>> = database.getAllSites()
+    override fun getAllSites(): Flow<Result<List<HeritageSite>>> =
+        dataSource.getAllSites()
+            .map<List<com.museum.data.Museum_item>, Result<List<HeritageSite>>> {
+                Result.Success(it.toHeritageSites())
+            }
+            .catch { emit(Result.Error(it)) }
 
-    override fun getSiteById(id: Long): Flow<HeritageSite?> = database.getSiteById(id)
+    override fun getSiteById(id: Long): Flow<Result<HeritageSite?>> =
+        dataSource.getSiteById(id)
+            .map<com.museum.data.Museum_item?, Result<HeritageSite?>> {
+                Result.Success(it?.toHeritageSite())
+            }
+            .catch { emit(Result.Error(it)) }
 
-    override fun getFavoriteSites(): Flow<List<HeritageSite>> = database.getFavoriteSites()
+    override fun getFavoriteSites(): Flow<Result<List<HeritageSite>>> =
+        dataSource.getFavoriteSites()
+            .map<List<com.museum.data.Museum_item>, Result<List<HeritageSite>>> {
+                Result.Success(it.toHeritageSites())
+            }
+            .catch { emit(Result.Error(it)) }
 
-    override fun searchSites(query: String): Flow<List<HeritageSite>> = database.searchSites(query)
+    override fun searchSites(query: String): Flow<Result<List<HeritageSite>>> =
+        dataSource.searchSites(query)
+            .map<List<com.museum.data.Museum_item>, Result<List<HeritageSite>>> {
+                Result.Success(it.toHeritageSites())
+            }
+            .catch { emit(Result.Error(it)) }
 
-    override suspend fun toggleFavorite(site: HeritageSite) {
-        database.updateFavorite(site.id, !site.isFavorite)
+    override suspend fun toggleFavorite(site: HeritageSite): Result<Unit> {
+        return try {
+            dataSource.updateFavorite(site.id, !site.isFavorite)
+            Result.Success(Unit)
+        } catch (e: Exception) {
+            Result.Error(e)
+        }
     }
 
-    override suspend fun markAsViewed(siteId: Long) {
-        database.markAsViewed(siteId)
+    override suspend fun markAsViewed(siteId: Long): Result<Unit> {
+        return try {
+            dataSource.markAsViewed(siteId)
+            Result.Success(Unit)
+        } catch (e: Exception) {
+            Result.Error(e)
+        }
     }
 
-    override suspend fun getSiteCount(): Long = database.getCount()
+    override suspend fun getSiteCount(): Result<Long> {
+        return try {
+            Result.Success(dataSource.getCount())
+        } catch (e: Exception) {
+            Result.Error(e)
+        }
+    }
 }

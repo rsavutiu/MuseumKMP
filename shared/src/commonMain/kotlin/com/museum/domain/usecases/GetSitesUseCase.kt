@@ -2,8 +2,9 @@
 
 import com.museum.data.models.HeritageSite
 import com.museum.data.repository.IMuseumRepository
+import com.museum.domain.model.Result
 import kotlinx.coroutines.flow.Flow
 
 class GetSitesUseCase(private val repository: IMuseumRepository) {
-    operator fun invoke(): Flow<List<HeritageSite>> = repository.getAllSites()
+    operator fun invoke(): Flow<Result<List<HeritageSite>>> = repository.getAllSites()
 }
