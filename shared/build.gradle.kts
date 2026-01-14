@@ -33,20 +33,31 @@ kotlin {
                 implementation(compose.material3)
                 implementation(compose.ui)
                 implementation(compose.components.resources)
-                
                 implementation(libs.kotlinx.coroutines.core)
                 implementation(libs.sqldelight.coroutines)
+                implementation(libs.kermit)
+                implementation(libs.coil.compose)
+                implementation(libs.coil.network.ktor)
+                implementation(libs.ktor.client.core)
+                implementation(libs.koin.core)
             }
         }
-        
+
         val androidMain by getting {
             dependencies {
                 implementation(libs.sqldelight.driver.android)
                 implementation(libs.androidx.lifecycle.viewmodel)
                 implementation(libs.androidx.lifecycle.runtime.compose)
+                implementation(libs.ktor.client.okhttp)
+                implementation(libs.ktor.client.logging)
+                implementation(libs.koin.android)
+                implementation(libs.koin.compose)
+                implementation(libs.maps.compose)
+                implementation(libs.play.services.maps)
+                implementation(libs.maps.compose.utils)
             }
         }
-        
+
         val iosMain by creating {
             dependsOn(commonMain)
             dependencies {

@@ -1,0 +1,55 @@
+# Museum KMP Project Rules
+
+## Architecture
+- This is a Kotlin Multiplatform (KMP) project with Android and iOS targets
+- Use Clean Architecture: presentation → domain → data layers
+- ViewModels receive CoroutineScope via constructor (no viewModelScope)
+- Use Koin for Multiplaform DI
+
+## Compose & UI
+- Use Material3 design system
+- For image loading, ALWAYS use Coil3 with `coil3.compose.LocalPlatformContext` (not androidx LocalContext)
+- commonMain composables must be platform-agnostic
+- Platform-specific UI code goes in androidMain/iosMain
+- Use `coil3.request.ImageRequest.Builder(context)` for all image requests
+
+## Platform-Specific Code
+- Use expect/actual pattern for platform-specific implementations
+- Always think of both platforms, use expect/actual and actually implement all the targets you know of (even Desktop/Web)
+- Android Context operations require expect/actual wrapper functions
+- Resource ID lookups need platform-specific implementations (see getDrawableResourceId util)
+- Never access Android-specific APIs directly from commonMain
+
+## Dependencies
+- Coil 3.0.4 for image loading with Ktor3 network fetcher
+- SQLDelight for database
+- Jetpack Compose for UI
+- Navigation Compose for routing
+
+## Database
+- HeritageSite model represents World Heritage Sites
+- Sites have: id, name, location, description, imageUrl, style, isFavorite
+- Repository pattern with UseCases for business logic
+
+## Navigation
+- Three screens: Home → SiteDetail → DetailScreen (full image with wallpaper)
+- Use NavController with typed route arguments
+- SiteDetailScreen has tabs: Description and Full Image
+- DetailScreen provides zoomable image with wallpaper setting FAB
+
+## Common Mistakes to Avoid
+- ✅ If you need to use worktrees, always commit to the real repo at the end of your prompt.
+- ❌ Never use `androidx.compose.ui.platform.LocalContext` in commonMain
+- ❌ Never use Android-specific APIs directly in commonMain
+- ❌ Never use `context.resources` or `context.packageName` in commonMain
+- ❌ Do not overexplain, try to be concise
+- ✅ Always use `coil3.compose.LocalPlatformContext` for Coil image requests
+- ✅ Wrap platform-specific operations in expect/actual declarations
+- ✅ Use imageRequestBuilder() and getDrawableResourceId() utils for platform-specific logic
+
+## Code Style
+- Follow Kotlin coding conventions
+- Use meaningful variable names
+- Prefer immutability (val over var)
+- Use sealed classes for UI state
+- Keep composables small and focused

@@ -8,5 +8,9 @@ data class Artwork(
     val imageUrl: String?,
     val description: String?,
     val museumId: Long,
-    val isFavorite: Boolean = false
+    val isFavorite: Boolean = false,
+    val primaryColor: Int? = null,
+    val secondaryColor: Int? = null,
+    val backgroundColor: Int? = null,
+    val detailColor: Int? = null
 )

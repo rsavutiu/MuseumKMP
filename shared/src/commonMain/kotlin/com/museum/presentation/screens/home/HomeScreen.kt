@@ -1,70 +1,68 @@
 ﻿package com.museum.presentation.screens.home
 
-import androidx.compose.foundation.layout.*
-import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.lazy.items
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Search
-import androidx.compose.material3.*
-import androidx.compose.runtime.*
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.padding
+import androidx.compose.material3.DrawerValue
+import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.ModalNavigationDrawer
+import androidx.compose.material3.Scaffold
+import androidx.compose.material3.rememberDrawerState
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.runtime.saveable.rememberSaveable
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.unit.dp
-import com.museum.presentation.components.ArtworkCard
-import com.museum.presentation.components.EmptyState
-import com.museum.presentation.components.LoadingIndicator
+import kotlinx.coroutines.launch
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun HomeScreen(
     viewModel: HomeViewModel,
-    onArtworkClick: (Long) -> Unit,
+    onSiteClick: (Long) -> Unit,
     modifier: Modifier = Modifier
 ) {
     val uiState by viewModel.uiState.collectAsState()
     val searchQuery by viewModel.searchQuery.collectAsState()
+    val viewMode by viewModel.viewMode.collectAsState()
+    val drawerState = rememberDrawerState(DrawerValue.Closed)
+    val scope = rememberCoroutineScope()
+    var searchActive by rememberSaveable { mutableStateOf(false) }
 
-    Scaffold(
-        topBar = {
-            TopAppBar(
-                title = { Text("Museum Collection") },
-                colors = TopAppBarDefaults.topAppBarColors(
-                    containerColor = MaterialTheme.colorScheme.primaryContainer
-                )
+    ModalNavigationDrawer(
+        drawerState = drawerState,
+        drawerContent = {
+            HomeDrawerContent(
+                viewMode = viewMode,
+                onViewModeChange = viewModel::setViewMode,
+                onCloseDrawer = { scope.launch { drawerState.close() } }
             )
         }
-    ) { paddingValues ->
-        Column(
-            modifier = modifier.fillMaxSize().padding(paddingValues)
-        ) {
-            OutlinedTextField(
-                value = searchQuery,
-                onValueChange = viewModel::onSearchQueryChange,
-                modifier = Modifier.fillMaxWidth().padding(16.dp),
-                placeholder = { Text("Search artworks...") },
-                leadingIcon = { Icon(Icons.Default.Search, contentDescription = null) },
-                singleLine = true
-            )
-
-            when (val state = uiState) {
-                is HomeUiState.Loading -> LoadingIndicator()
-                is HomeUiState.Empty -> EmptyState(
-                    message = if (searchQuery.isBlank()) "No artworks found" else "No results"
+    ) {
+        Scaffold(
+            topBar = {
+                HomeTopAppBar(
+                    searchActive = searchActive,
+                    searchQuery = searchQuery,
+                    onSearchQueryChange = viewModel::onSearchQueryChange,
+                    onSearchActiveChange = { searchActive = it },
+                    onOpenDrawer = { scope.launch { drawerState.open() } }
                 )
-                is HomeUiState.Success -> {
-                    LazyColumn(
-                        contentPadding = PaddingValues(16.dp),
-                        verticalArrangement = Arrangement.spacedBy(12.dp)
-                    ) {
-                        items(items = state.artworks, key = { it.id }) { artwork ->
-                            ArtworkCard(
-                                artwork = artwork,
-                                onClick = { onArtworkClick(artwork.id) },
-                                onFavoriteClick = { viewModel.onFavoriteClick(artwork) }
-                            )
-                        }
-                    }
-                }
-                is HomeUiState.Error -> EmptyState(message = state.message)
+            }
+        ) { paddingValues ->
+            Column(
+                modifier = modifier.fillMaxSize().padding(paddingValues)
+            ) {
+                HomeContent(
+                    uiState = uiState,
+                    viewMode = viewMode,
+                    searchQuery = searchQuery,
+                    onSiteClick = onSiteClick,
+                    onFavoriteClick = viewModel::onFavoriteClick
+                )
             }
         }
     }

@@ -1,28 +1,58 @@
 ﻿package com.museum.android
 
 import android.app.Application
-import com.museum.data.local.DatabaseDriverFactory
-import com.museum.di.AppModule
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.SupervisorJob
-import kotlinx.coroutines.launch
+import android.os.StrictMode
+import coil3.ImageLoader
+import coil3.PlatformContext
+import coil3.SingletonImageLoader
+import coil3.network.ktor3.KtorNetworkFetcherFactory
+import coil3.request.crossfade
+import coil3.util.DebugLogger
+import com.museum.di.initKoin
+import org.koin.android.ext.koin.androidContext
+import org.koin.android.ext.koin.androidLogger
+import org.koin.core.logger.Level
 
-class MuseumApplication : Application() {
-    
-    private val applicationScope = CoroutineScope(SupervisorJob() + Dispatchers.Main)
-    
-    lateinit var appModule: AppModule
-        private set
-    
+class MuseumApplication : Application(), SingletonImageLoader.Factory {
+
     override fun onCreate() {
         super.onCreate()
-        
-        val driverFactory = DatabaseDriverFactory(applicationContext)
-        appModule = AppModule(driverFactory)
-        
-        applicationScope.launch {
-            appModule.repository.initializeSampleData()
+
+        if (BuildConfig.DEBUG) {
+            StrictMode.setThreadPolicy(
+                StrictMode.ThreadPolicy.Builder()
+                    .detectAll()
+                    .penaltyLog()
+                    .build()
+            )
+            StrictMode.setVmPolicy(
+                StrictMode.VmPolicy.Builder()
+                    .detectAll()
+                    .penaltyLog()
+                    .build()
+            )
         }
+
+        // Initialize Koin
+        initKoin {
+            androidLogger(Level.ERROR) // Only show errors in production
+            androidContext(this@MuseumApplication)
+        }
+    }
+
+    override fun newImageLoader(context: PlatformContext): ImageLoader {
+        return ImageLoader.Builder(context)
+            .components {
+                add(KtorNetworkFetcherFactory())
+            }
+            .memoryCache {
+                coil3.memory.MemoryCache.Builder()
+                    .maxSizePercent(context, 0.30) // Use 30% of available memory
+                    .strongReferencesEnabled(true) // Keep strong references
+                    .build()
+            }
+            .crossfade(true)
+            .logger(DebugLogger())
+            .build()
     }
 }

@@ -1,27 +1,26 @@
 ﻿package com.museum.data.repository
 
 import com.museum.data.local.MuseumDatabaseWrapper
-import com.museum.data.models.Artwork
-import com.museum.data.models.Museum
+import com.museum.data.models.HeritageSite
 import kotlinx.coroutines.flow.Flow
 
 class MuseumRepository(private val database: MuseumDatabaseWrapper) {
     
-    fun getAllArtworks(): Flow<List<Artwork>> = database.getAllArtworks()
+    fun getAllSites(): Flow<List<HeritageSite>> = database.getAllSites()
     
-    fun getArtworkById(id: Long): Flow<Artwork?> = database.getArtworkById(id)
+    fun getSiteById(id: Long): Flow<HeritageSite?> = database.getSiteById(id)
     
-    fun getFavoriteArtworks(): Flow<List<Artwork>> = database.getFavoriteArtworks()
+    fun getFavoriteSites(): Flow<List<HeritageSite>> = database.getFavoriteSites()
     
-    fun searchArtworks(query: String): Flow<List<Artwork>> = database.searchArtworks(query)
+    fun searchSites(query: String): Flow<List<HeritageSite>> = database.searchSites(query)
     
-    fun toggleFavorite(artwork: Artwork) {
-        database.updateFavorite(artwork.id, !artwork.isFavorite)
+    suspend fun toggleFavorite(site: HeritageSite) {
+        database.updateFavorite(site.id, !site.isFavorite)
     }
     
-    fun getAllMuseums(): Flow<List<Museum>> = database.getAllMuseums()
-    
-    fun initializeSampleData() {
-        database.insertSampleData()
+    suspend fun markAsViewed(siteId: Long) {
+        database.markAsViewed(siteId)
     }
+    
+    suspend fun getSiteCount(): Long = database.getCount()
 }

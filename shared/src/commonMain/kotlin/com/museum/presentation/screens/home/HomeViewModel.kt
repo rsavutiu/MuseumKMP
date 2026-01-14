@@ -1,16 +1,17 @@
 ﻿package com.museum.presentation.screens.home
 
-import com.museum.data.models.Artwork
-import com.museum.domain.usecases.GetArtworksUseCase
-import com.museum.domain.usecases.SearchArtworkUseCase
+import com.museum.data.models.HeritageSite
+import com.museum.domain.usecases.GetSitesUseCase
+import com.museum.domain.usecases.SearchSiteUseCase
 import com.museum.domain.usecases.ToggleFavoriteUseCase
 import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.launch
 
 class HomeViewModel(
-    private val getArtworksUseCase: GetArtworksUseCase,
-    private val searchArtworkUseCase: SearchArtworkUseCase,
+    private val getSitesUseCase: GetSitesUseCase,
+    private val searchSiteUseCase: SearchSiteUseCase,
     private val toggleFavoriteUseCase: ToggleFavoriteUseCase,
     private val coroutineScope: CoroutineScope
 ) {
@@ -20,21 +21,29 @@ class HomeViewModel(
     private val _uiState = MutableStateFlow<HomeUiState>(HomeUiState.Loading)
     val uiState: StateFlow<HomeUiState> = _uiState.asStateFlow()
 
+    private val _viewMode = MutableStateFlow<ViewMode>(ViewMode.Grid)
+    val viewMode: StateFlow<ViewMode> = _viewMode.asStateFlow()
+
     init {
-        loadArtworks()
+        loadSites()
     }
 
-    private fun loadArtworks() {
+    @OptIn(ExperimentalCoroutinesApi::class)
+    private fun loadSites() {
         coroutineScope.launch {
             searchQuery
                 .flatMapLatest { query ->
-                    if (query.isBlank()) getArtworksUseCase() else searchArtworkUseCase(query)
+                    if (query.isBlank()) getSitesUseCase() else searchSiteUseCase(query)
                 }
                 .catch { e ->
                     _uiState.value = HomeUiState.Error(e.message ?: "Unknown error")
                 }
-                .collect { artworks ->
-                    _uiState.value = if (artworks.isEmpty()) HomeUiState.Empty else HomeUiState.Success(artworks)
+                .collect { sites ->
+                    _uiState.value = if (sites.isEmpty()) {
+                        HomeUiState.Empty
+                    } else {
+                        HomeUiState.Success(sites)
+                    }
                 }
         }
     }
@@ -43,16 +52,24 @@ class HomeViewModel(
         _searchQuery.value = query
     }
 
-    fun onFavoriteClick(artwork: Artwork) {
+    fun onFavoriteClick(site: HeritageSite) {
         coroutineScope.launch {
-            toggleFavoriteUseCase(artwork)
+            toggleFavoriteUseCase(site)
         }
+    }
+
+    fun setViewMode(mode: ViewMode) {
+        _viewMode.value = mode
     }
 }
 
 sealed class HomeUiState {
     object Loading : HomeUiState()
     object Empty : HomeUiState()
-    data class Success(val artworks: List<Artwork>) : HomeUiState()
+    data class Success(val sites: List<HeritageSite>) : HomeUiState()
     data class Error(val message: String) : HomeUiState()
+}
+
+enum class ViewMode {
+    Grid, Map
 }
