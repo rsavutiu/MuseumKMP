@@ -1,6 +1,7 @@
 package com.museum.android
 
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.remember
 import androidx.navigation.NavType
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
@@ -13,6 +14,7 @@ import com.museum.presentation.screens.home.HomeScreen
 import com.museum.presentation.screens.home.HomeViewModel
 import com.museum.presentation.screens.site.SiteDetailScreen
 import com.museum.presentation.screens.site.SiteDetailViewModel
+import com.museum.utils.LOG
 import org.koin.androidx.compose.koinViewModel
 import org.koin.core.parameter.parametersOf
 
@@ -23,7 +25,11 @@ fun AppNavigation() {
     NavHost(navController = navController, startDestination = "main_graph") {
         navigation(startDestination = "home", route = "main_graph") {
             composable("home") {
-                val viewModel: HomeViewModel = koinViewModel()
+                val parentEntry = remember(navController.currentBackStackEntry) {
+                    navController.getBackStackEntry("main_graph")
+                }
+                val viewModel: HomeViewModel = koinViewModel(viewModelStoreOwner = parentEntry)
+                LOG("HomeViewModel: $viewModel")
                 HomeScreen(
                     viewModel = viewModel,
                     onSiteClick = { siteId -> navController.navigate("site/$siteId") }
