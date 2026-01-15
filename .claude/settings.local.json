@@ -10,7 +10,12 @@
       "Bash(echo:*)",
       "Bash(git add:*)",
       "Bash(git commit -m \"$\\(cat <<''EOF''\nFix app icon and implement comprehensive localization\n\nThis commit addresses two critical issues:\n\n1. App Icon Not Displaying\n   - Fixed typo in AndroidManifest.xml: android.icon → android:icon\n   - This was causing the system to use default icon instead of custom launcher icon\n\n2. Complete Localization Implementation\n   - Extended HeritageSite model with all 10 language variants \\(ro, it, es, de, fr, pt, ru, ar, zh, ja\\)\n   - Added 30 new localized fields: names, descriptions, and styles for each language\n   - Created LocalizationManager with expect/actual pattern for Android, iOS, and Desktop\n   - Implemented automatic language detection based on device locale\n   - Added helper methods: getLocalizedName\\(\\), getLocalizedDescription\\(\\), getLocalizedStyle\\(\\)\n   - Updated MuseumDatabaseWrapper to map all localized fields from database\n   - Updated all UI components to use localized content:\n     * SiteDetailScreen\n     * SiteCard\n     * DetailScreen\n   - Graceful fallback to English when localized content is unavailable\n\nThe app now automatically displays content in the user''s device language,\nsupporting 11 languages total \\(English + 10 localized languages\\).\n\n🤖 Generated with [Claude Code]\\(https://claude.com/claude-code\\)\n\nCo-Authored-By: Claude Sonnet 4.5 <noreply@anthropic.com>\nEOF\n\\)\")",
-      "Bash(git commit:*)"
+      "Bash(git commit:*)",
+      "Bash(find:*)",
+      "Bash(sqlite3:*)",
+      "Bash(python validate_heritage_database.py:*)",
+      "Bash(curl:*)",
+      "Bash(python:*)"
     ]
   }
 }
