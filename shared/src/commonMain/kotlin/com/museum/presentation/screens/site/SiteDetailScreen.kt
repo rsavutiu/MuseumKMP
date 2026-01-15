@@ -45,6 +45,7 @@ import coil3.request.ImageRequest
 import com.museum.data.models.HeritageSite
 import com.museum.presentation.components.EmptyState
 import com.museum.presentation.components.LoadingIndicator
+import com.museum.presentation.components.MarqueeText
 import com.museum.utils.getDrawableResourceId
 import com.museum.utils.getPrimaryColor
 import com.museum.utils.toDrawableResourceName
@@ -66,7 +67,13 @@ fun SiteDetailScreen(
         topBar = {
             (uiState as? SiteDetailUiState.Success)?.site?.let {
                 TopAppBar(
-                    title = { Text(it.getLocalizedName(), maxLines = 1, overflow = TextOverflow.Ellipsis) },
+                    title = {
+                        MarqueeText(
+                            text = it.getLocalizedName(),
+                            style = MaterialTheme.typography.titleLarge,
+                            color = Color.White
+                        )
+                    },
                     navigationIcon = {
                         IconButton(onClick = onBackClick) {
                             Icon(Icons.AutoMirrored.Filled.ArrowBack, contentDescription = "Back")
