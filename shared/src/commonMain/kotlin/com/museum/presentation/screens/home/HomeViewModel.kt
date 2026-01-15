@@ -1,6 +1,7 @@
 ﻿package com.museum.presentation.screens.home
 
 import com.museum.data.models.HeritageSite
+import com.museum.domain.model.Result
 import com.museum.domain.usecases.GetSitesUseCase
 import com.museum.domain.usecases.SearchSiteUseCase
 import com.museum.domain.usecases.ToggleFavoriteUseCase
@@ -35,14 +36,18 @@ class HomeViewModel(
                 .flatMapLatest { query ->
                     if (query.isBlank()) getSitesUseCase() else searchSiteUseCase(query)
                 }
-                .catch { e ->
-                    _uiState.value = HomeUiState.Error(e.message ?: "Unknown error")
-                }
-                .collect { sites ->
-                    _uiState.value = if (sites.isEmpty()) {
-                        HomeUiState.Empty
-                    } else {
-                        HomeUiState.Success(sites)
+                .collect { result ->
+                    _uiState.value = when (result) {
+                        is Result.Success -> {
+                            if (result.data.isEmpty()) {
+                                HomeUiState.Empty
+                            } else {
+                                HomeUiState.Success(result.data)
+                            }
+                        }
+                        is Result.Error -> {
+                            HomeUiState.Error(result.exception.message ?: "Unknown error")
+                        }
                     }
                 }
         }

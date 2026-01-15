@@ -1,6 +1,7 @@
 package com.museum.presentation.screens.detail
 
 import com.museum.data.models.HeritageSite
+import com.museum.domain.model.Result
 import com.museum.domain.services.WallpaperService
 import com.museum.domain.usecases.GetSitesUseCase
 import kotlinx.coroutines.CoroutineScope
@@ -26,15 +27,19 @@ class DetailViewModel(
     private fun loadSite() {
         coroutineScope.launch {
             getSitesUseCase()
-                .catch { e ->
-                    _uiState.value = DetailUiState.Error(e.message ?: "Unknown error")
-                }
-                .collect { sites ->
-                    val site = sites.find { it.id == siteId }
-                    _uiState.value = if (site != null) {
-                        DetailUiState.Success(site)
-                    } else {
-                        DetailUiState.Error("Site not found")
+                .collect { result ->
+                    _uiState.value = when (result) {
+                        is Result.Success -> {
+                            val site = result.data.find { it.id == siteId }
+                            if (site != null) {
+                                DetailUiState.Success(site)
+                            } else {
+                                DetailUiState.Error("Site not found")
+                            }
+                        }
+                        is Result.Error -> {
+                            DetailUiState.Error(result.exception.message ?: "Unknown error")
+                        }
                     }
                 }
         }

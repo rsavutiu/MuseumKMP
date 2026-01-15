@@ -14,8 +14,8 @@ val viewModelModule = module {
         CoroutineScope(SupervisorJob() + Dispatchers.Main)
     }
 
-    // HomeViewModel - Factory (new instance per screen)
-    factory {
+    // HomeViewModel - Singleton (single instance for the entire app)
+    single {
         HomeViewModel(
             getSitesUseCase = get(),
             searchSiteUseCase = get(),
