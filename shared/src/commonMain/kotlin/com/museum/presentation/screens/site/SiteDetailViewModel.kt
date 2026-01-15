@@ -1,5 +1,6 @@
 ﻿package com.museum.presentation.screens.site
 
+import androidx.lifecycle.ViewModel
 import com.museum.data.models.HeritageSite
 import com.museum.data.repository.IMuseumRepository
 import com.museum.data.repository.MuseumRepository
@@ -14,7 +15,7 @@ class SiteDetailViewModel(
     private val repository: IMuseumRepository,
     private val toggleFavoriteUseCase: ToggleFavoriteUseCase,
     private val coroutineScope: CoroutineScope
-) {
+): ViewModel() {
     private val _uiState = MutableStateFlow<SiteDetailUiState>(SiteDetailUiState.Loading)
     val uiState: StateFlow<SiteDetailUiState> = _uiState.asStateFlow()
 

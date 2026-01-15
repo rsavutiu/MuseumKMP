@@ -1,5 +1,6 @@
 package com.museum.presentation.screens.detail
 
+import androidx.lifecycle.ViewModel
 import com.museum.data.models.HeritageSite
 import com.museum.domain.model.Result
 import com.museum.domain.services.WallpaperService
@@ -13,7 +14,7 @@ class DetailViewModel(
     private val getSitesUseCase: GetSitesUseCase,
     private val wallpaperService: WallpaperService,
     private val coroutineScope: CoroutineScope
-) {
+): ViewModel() {
     private val _uiState = MutableStateFlow<DetailUiState>(DetailUiState.Loading)
     val uiState: StateFlow<DetailUiState> = _uiState.asStateFlow()
 

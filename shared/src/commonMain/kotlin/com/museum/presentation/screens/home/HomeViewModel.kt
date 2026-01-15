@@ -1,5 +1,6 @@
 ﻿package com.museum.presentation.screens.home
 
+import androidx.lifecycle.ViewModel
 import com.museum.data.models.HeritageSite
 import com.museum.domain.model.Result
 import com.museum.domain.usecases.GetSitesUseCase
@@ -15,7 +16,7 @@ class HomeViewModel(
     private val searchSiteUseCase: SearchSiteUseCase,
     private val toggleFavoriteUseCase: ToggleFavoriteUseCase,
     private val coroutineScope: CoroutineScope
-) {
+): ViewModel() {
     private val _searchQuery = MutableStateFlow("")
     val searchQuery: StateFlow<String> = _searchQuery.asStateFlow()
 
