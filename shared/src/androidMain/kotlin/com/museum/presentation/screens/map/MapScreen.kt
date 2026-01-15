@@ -96,81 +96,91 @@ fun MapScreen(
             position = CameraPosition.fromLatLngZoom(LatLng(centerLat, centerLng), 2f)
         }
 
-        var selectedSite by remember { mutableStateOf<HeritageSite?>(null) }
         val currentZoom = cameraPositionState.position.zoom
-        val showThumbnails = currentZoom >= 12f
-
-        /*
+        val clusterZoomThreshold = 8f // Zoom level where clustering stops
+        val infoWindowZoomThreshold = 12f // Zoom level where info windows appear
 
         GoogleMap(
             modifier = modifier.fillMaxSize(),
             cameraPositionState = cameraPositionState,
             properties = MapProperties(isMyLocationEnabled = false, minZoomPreference = 4.0f),
-            uiSettings = MapUiSettings(zoomControlsEnabled = true, myLocationButtonEnabled = false)
+            uiSettings = MapUiSettings(
+                zoomControlsEnabled = true,
+                myLocationButtonEnabled = false,
+                scrollGesturesEnabled = true,
+                zoomGesturesEnabled = true,
+                rotationGesturesEnabled = true,
+                tiltGesturesEnabled = true
+            )
         ) {
             val context = LocalContext.current
-            val clusterManager = rememberClusterManager<SiteClusterItem>()
 
-            // Configure the cluster manager and its algorithm in a LaunchedEffect
-            LaunchedEffect(clusterManager) {
-                clusterManager?.let {
-                    it.algorithm = GridBasedAlgorithm()
-                    it.setOnClusterClickListener { false }
-                    it.setOnClusterItemClickListener { item ->
-                        onSiteClick(item.site.id)
-                        true
+            when {
+                // Low zoom (< 8): Show clusters
+                currentZoom < clusterZoomThreshold -> {
+                    val clusterManager = rememberClusterManager<SiteClusterItem>()
+
+                    LaunchedEffect(clusterManager) {
+                        clusterManager?.let {
+                            it.algorithm = GridBasedAlgorithm()
+                            it.setOnClusterClickListener { cluster ->
+                                // Zoom into cluster
+                                false
+                            }
+                            it.setOnClusterItemClickListener { item ->
+                                // Don't navigate at this zoom level, let it zoom in more
+                                false
+                            }
+                        }
+                    }
+
+                    val clusterItems = remember(sitesWithCoordinates) {
+                        sitesWithCoordinates.map { SiteClusterItem(it) }
+                    }
+
+                    clusterManager?.let { manager ->
+                        Clustering(
+                            items = clusterItems,
+                            clusterManager = manager,
+                        )
                     }
                 }
-            }
 
-            val clusterItems = remember(sitesWithCoordinates) {
-                sitesWithCoordinates.map { SiteClusterItem(it) }
-            }
-            clusterManager?.let { it ->
-            Clustering(
-                items = clusterItems,
-                clusterManager = it,
-            )}
-        }
+                // Medium zoom (8-12): Show pins with info windows
+                currentZoom < infoWindowZoomThreshold -> {
+                    sitesWithCoordinates.forEach { site ->
+                        val position = LatLng(site.latitude!!, site.longitude!!)
+                        val markerState = rememberMarkerState(position = position)
 
-         */
-
-
-
-        GoogleMap(
-            modifier = modifier.fillMaxSize(),
-            cameraPositionState = cameraPositionState,
-            properties = MapProperties(isMyLocationEnabled = false, minZoomPreference = 4.0f),
-            uiSettings = MapUiSettings(zoomControlsEnabled = true, myLocationButtonEnabled = false)
-        ) {
-            sitesWithCoordinates.forEach { site ->
-                val position = LatLng(site.latitude!!, site.longitude!!)
-
-                if (showThumbnails) {
-                    // High zoom: show thumbnail images, click goes directly to detail
-                    MarkerInfoWindow(
-                        state = rememberMarkerState(position = position),
-                        onClick = {
-                            onSiteClick(site.id)
-                            true
-                        }
-                    ) {
-                        SiteThumbnailMarker(site)
-                    }
-                } else {
-                    // Low zoom: show pins with info window
-                    MarkerInfoWindow(
-                        state = rememberMarkerState(position = position),
-                        onClick = {
-                            selectedSite = if (selectedSite?.id == site.id) null else site
-                            false
-                        }
-                    ) {
-                        if (selectedSite?.id == site.id) {
+                        MarkerInfoWindow(
+                            state = markerState,
+                            onClick = {
+                                // Toggle info window
+                                markerState.showInfoWindow()
+                                false
+                            }
+                        ) { marker ->
                             SiteInfoWindow(
                                 site = site,
                                 onClick = { onSiteClick(site.id) }
                             )
+                        }
+                    }
+                }
+
+                // High zoom (>= 12): Show thumbnail images
+                else -> {
+                    sitesWithCoordinates.forEach { site ->
+                        val position = LatLng(site.latitude!!, site.longitude!!)
+
+                        MarkerInfoWindow(
+                            state = rememberMarkerState(position = position),
+                            onClick = {
+                                onSiteClick(site.id)
+                                true
+                            }
+                        ) { marker ->
+                            SiteThumbnailMarker(site)
                         }
                     }
                 }
@@ -203,13 +213,16 @@ private fun SiteThumbnailMarker(site: HeritageSite) {
 
     Card(
         modifier = Modifier
-            .size(80.dp)
+            .size(60.dp)
             .shadow(4.dp, RoundedCornerShape(8.dp)),
         shape = RoundedCornerShape(8.dp),
         border = BorderStroke(2.dp, Color.White)
     ) {
         AsyncImage(
-            model = ImageRequest.Builder(context).data(imageModel).build(),
+            model = ImageRequest.Builder(context)
+                .data(imageModel)
+                .allowHardware(false) // Fix hardware bitmap error
+                .build(),
             contentDescription = site.getLocalizedName(),
             modifier = Modifier.fillMaxSize(),
             contentScale = ContentScale.Crop
@@ -230,36 +243,38 @@ private fun SiteInfoWindow(
 
     Card(
         modifier = Modifier
-            .width(200.dp)
+            .width(160.dp)
             .clickable { onClick() }
-            .shadow(8.dp, RoundedCornerShape(12.dp)),
-        shape = RoundedCornerShape(12.dp),
+            .shadow(6.dp, RoundedCornerShape(8.dp)),
+        shape = RoundedCornerShape(8.dp),
         colors = CardDefaults.cardColors(containerColor = Color.White)
     ) {
         Column(
-            modifier = Modifier.padding(12.dp)
+            modifier = Modifier.padding(8.dp)
         ) {
             AsyncImage(
-                model = ImageRequest.Builder(context).data(imageModel).build(),
+                model = ImageRequest.Builder(context)
+                    .data(imageModel)
+                    .allowHardware(false) // Fix hardware bitmap error
+                    .build(),
                 contentDescription = site.getLocalizedName(),
                 modifier = Modifier
-                    .fillMaxSize()
-                    .height(100.dp)
-                    .clip(RoundedCornerShape(8.dp)),
+                    .height(80.dp)
+                    .clip(RoundedCornerShape(6.dp)),
                 contentScale = ContentScale.Crop
             )
 
-            Spacer(modifier = Modifier.height(8.dp))
+            Spacer(modifier = Modifier.height(6.dp))
 
             Text(
                 text = site.getLocalizedName(),
-                style = MaterialTheme.typography.titleMedium,
+                style = MaterialTheme.typography.bodyMedium,
                 color = Color.Black,
                 maxLines = 2
             )
 
             site.location?.let { location ->
-                Spacer(modifier = Modifier.height(4.dp))
+                Spacer(modifier = Modifier.height(2.dp))
                 Text(
                     text = location,
                     style = MaterialTheme.typography.bodySmall,

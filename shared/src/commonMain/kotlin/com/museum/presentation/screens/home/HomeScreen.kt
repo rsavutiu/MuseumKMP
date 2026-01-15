@@ -34,6 +34,7 @@ fun HomeScreen(
 
     ModalNavigationDrawer(
         drawerState = drawerState,
+        gesturesEnabled = viewMode != ViewMode.Map, // Disable drawer gestures in Map view
         drawerContent = {
             HomeDrawerContent(
                 viewMode = viewMode,
