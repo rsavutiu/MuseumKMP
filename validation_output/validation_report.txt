@@ -1,0 +1,294 @@
+============================================================
+UNESCO HERITAGE DATABASE VALIDATION REPORT
+============================================================
+Generated: 2026-01-15 18:28:14
+Database: heritage_sites.db
+
+SUMMARY:
+------------------------------------------------------------
+✓ Language Issues: 17 found, 0 fixed
+✓ Missing Authors: 0 found, 0 fixed
+✓ Missing Images: 100 found, 0 downloaded
+✓ Incorrect Images: 0 found (flagged for review)
+✓ Missing UNESCO Sites: 50 found, 50 added
+
+LANGUAGE ISSUES DETAIL:
+------------------------------------------------------------
+[ID 3] Historic Centres of Berat and Gjirokastra 
+  Issue: ro_in_en_field
+  Fix: move_and_fetch_en
+  Status: NEEDS_MANUAL_FIX
+
+[ID 117] Dinosaur Provincial Park
+  Issue: en_in_ro_field
+  Fix: move_and_fetch_ro
+  Status: PENDING
+
+[ID 121] Historic District of Old Quebec
+  Issue: en_in_ro_field
+  Fix: move_and_fetch_ro
+  Status: PENDING
+
+[ID 124] Miguasha National Park
+  Issue: en_in_ro_field
+  Fix: move_and_fetch_ro
+  Status: PENDING
+
+[ID 170] Kaiping Diaolou and Villages
+  Issue: en_in_ro_field
+  Fix: move_and_fetch_ro
+  Status: PENDING
+
+[ID 172] Yin Xu
+  Issue: en_in_ro_field
+  Fix: move_and_fetch_ro
+  Status: PENDING
+
+[ID 189] Los Katios National Park
+  Issue: en_in_ro_field
+  Fix: move_and_fetch_ro
+  Status: PENDING
+
+[ID 198] Tai National Park
+  Issue: en_in_ro_field
+  Fix: move_and_fetch_ro
+  Status: PENDING
+
+[ID 217] Paphos
+  Issue: ro_in_en_field
+  Fix: move_and_fetch_en
+  Status: NEEDS_MANUAL_FIX
+
+[ID 281] Palace and Park of Fontainebleau
+  Issue: en_in_ro_field
+  Fix: move_and_fetch_ro
+  Status: PENDING
+
+[ID 405] Fatehpur Sikri
+  Issue: en_in_ro_field
+  Fix: move_and_fetch_ro
+  Status: PENDING
+
+[ID 444] Masjed-e Jame of Isfahan
+  Issue: en_in_ro_field
+  Fix: move_and_fetch_ro
+  Status: PENDING
+
+[ID 507] Syracuse and the Rocky Necropolis of Pantalica
+  Issue: en_in_ro_field
+  Fix: move_and_fetch_ro
+  Status: PENDING
+
+[ID 542] Mausoleum of Khoja Ahmed Yasawi
+  Issue: en_in_ro_field
+  Fix: move_and_fetch_ro
+  Status: PENDING
+
+[ID 543] Petroglyphs within the Archaeological Landscape of Tamgaly
+  Issue: en_in_ro_field
+  Fix: move_and_fetch_ro
+  Status: PENDING
+
+[ID 1004] Complex of Hué Monuments
+  Issue: en_in_ro_field
+  Fix: move_and_fetch_ro
+  Status: PENDING
+
+[ID 1045] Western Tien-Shan
+  Issue: en_in_ro_field
+  Fix: move_and_fetch_ro
+  Status: PENDING
+
+IMAGE VALIDATION:
+------------------------------------------------------------
+[ID None] Ancient and Primeval Beech Forests of the Carpathians and Other Regions of Europe
+  Issue: missing
+  Details: Download failed: HTTP 403
+  Status: FAILED
+
+[ID None] Mbanza Kongo, Vestiges of the Capital of the former Kingdom of Kongo
+  Issue: missing
+  Details: Download failed: HTTP 403
+  Status: FAILED
+
+[ID None] Jesuit Missions of the Guaranis: San Ignacio Mini, Santa Ana, Nuestra Señora de Loreto and Santa Maria Mayor (Argentina), Ruins of Sao Miguel das Missoes (Brazil)
+  Issue: missing
+  Details: Download failed: HTTP 403
+  Status: FAILED
+
+[ID None] Cueva de las Manos, Río Pinturas
+  Issue: missing
+  Details: Download failed: HTTP 403
+  Status: FAILED
+
+[ID None] Península Valdés
+  Issue: missing
+  Details: Download failed: HTTP 403
+  Status: FAILED
+
+[ID None] Jesuit Block and Estancias of Córdoba
+  Issue: missing
+  Details: Download failed: HTTP 403
+  Status: FAILED
+
+[ID None] Los Alerces National Park
+  Issue: missing
+  Details: Download failed: HTTP 403
+  Status: FAILED
+
+[ID None] ESMA Museum and Site of Memory – Former Clandestine Centre of Detention, Torture and Extermination
+  Issue: missing
+  Details: Download failed: HTTP 403
+  Status: FAILED
+
+[ID None] Budj Bim Cultural Landscape
+  Issue: missing
+  Details: Download failed: HTTP 403
+  Status: FAILED
+
+[ID None] Murujuga Cultural Landscape
+  Issue: missing
+  Details: Download failed: HTTP 403
+  Status: FAILED
+
+[ID None] Palace and Gardens of Schönbrunn
+  Issue: missing
+  Details: Download failed: HTTP 403
+  Status: FAILED
+
+[ID None] Frontiers of the Roman Empire – The Danube Limes (Western Segment)
+  Issue: missing
+  Details: Download failed: HTTP 403
+  Status: FAILED
+
+[ID None] The Great Spa Towns of Europe
+  Issue: missing
+  Details: Download failed: HTTP 403
+  Status: FAILED
+
+[ID None] Historic Centre of Sheki with the Khan’s Palace
+  Issue: missing
+  Details: Download failed: HTTP 403
+  Status: FAILED
+
+[ID None] Hyrcanian Forests
+  Issue: missing
+  Details: Download failed: HTTP 403
+  Status: FAILED
+
+[ID None] Cultural Landscape of Khinalig People and “Köç Yolu” Transhumance Route
+  Issue: missing
+  Details: Download failed: HTTP 403
+  Status: FAILED
+
+[ID None] Dilmun Burial Mounds
+  Issue: missing
+  Details: Download failed: HTTP 403
+  Status: FAILED
+
+[ID None] Flemish Béguinages
+  Issue: missing
+  Details: Download failed: HTTP 403
+  Status: FAILED
+
+[ID None] The Four Lifts on the Canal du Centre and their Environs, La Louvière and Le Roeulx (Hainaut)
+  Issue: missing
+  Details: Download failed: HTTP 403
+  Status: FAILED
+
+[ID None] Colonies of Benevolence
+  Issue: missing
+  Details: Download failed: HTTP 403
+  Status: FAILED
+
+... and 80 more
+
+NEW ENTRIES ADDED:
+------------------------------------------------------------
+[NEW] Qinghai Hoh Xil
+  Location: 
+  Year: 
+
+[NEW] Fanjingshan
+  Location: 
+  Year: 
+
+[NEW] Archaeological Ruins of Liangzhu City
+  Location: 
+  Year: 
+
+[NEW] Migratory Bird Sanctuaries along the Coast of Yellow Sea-Bohai Gulf of China
+  Location: 
+  Year: 
+
+[NEW] Quanzhou: Emporium of the World in Song-Yuan China
+  Location: 
+  Year: 
+
+[NEW] Cultural Landscape of Old Tea Forests of the Jingmai Mountain in Pu’er
+  Location: 
+  Year: 
+
+[NEW] Badain Jaran Desert - Towers of Sand and Lakes
+  Location: 
+  Year: 
+
+[NEW] Beijing Central Axis: A Building Ensemble Exhibiting the Ideal Order of the Chinese Capital
+  Location: 
+  Year: 
+
+[NEW] Xixia Imperial Tombs
+  Location: 
+  Year: 
+
+[NEW] Los Katíos National Park
+  Location: 
+  Year: 
+
+[NEW] San Agustín Archaeological Park
+  Location: 
+  Year: 
+
+[NEW] Chiribiquete National Park – “The Maloca of the Jaguar”
+  Location: 
+  Year: 
+
+[NEW] Forest Massif of Odzala-Kokoua
+  Location: 
+  Year: 
+
+[NEW] Area de Conservación Guanacaste
+  Location: 
+  Year: 
+
+[NEW] Taï National Park
+  Location: 
+  Year: 
+
+[NEW] Comoé National Park
+  Location: 
+  Year: 
+
+[NEW] Sudanese style mosques in northern Côte d’Ivoire
+  Location: 
+  Year: 
+
+[NEW] Episcopal Complex of the Euphrasian Basilica in the Historic Centre of Poreč
+  Location: 
+  Year: 
+
+[NEW] The Cathedral of St James in Šibenik
+  Location: 
+  Year: 
+
+[NEW] Venetian Works of Defence between the 16th and 17th Centuries:Stato da Terra– WesternStato da Mar
+  Location: 
+  Year: 
+
+... and 30 more
+
+
+SQL FIXES GENERATED:
+------------------------------------------------------------
+File: database_fixes.sql
+IMPORTANT: Review SQL carefully before applying!
