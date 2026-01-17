@@ -1,14 +1,14 @@
 ============================================================
 UNESCO HERITAGE DATABASE VALIDATION REPORT
 ============================================================
-Generated: 2026-01-15 18:28:14
+Generated: 2026-01-17 16:51:47
 Database: heritage_sites.db
 
 SUMMARY:
 ------------------------------------------------------------
 ✓ Language Issues: 17 found, 0 fixed
 ✓ Missing Authors: 0 found, 0 fixed
-✓ Missing Images: 100 found, 0 downloaded
+✓ Missing Images: 99 found, 0 downloaded
 ✓ Incorrect Images: 0 found (flagged for review)
 ✓ Missing UNESCO Sites: 50 found, 50 added
 
@@ -101,187 +101,187 @@ LANGUAGE ISSUES DETAIL:
 
 IMAGE VALIDATION:
 ------------------------------------------------------------
-[ID None] Ancient and Primeval Beech Forests of the Carpathians and Other Regions of Europe
+[ID 215] Urban Historic Centre of Cienfuegos
+  Issue: missing
+  Details: Download failed: HTTPSConnectionPool(host='s.iha.com', port=443): Max retries exceeded with url: /7813700007254/Guest-house-bed-and-breakfast-Cienfuegos-Hostal-Don-Jose_7.jpeg (Caused by SSLError(SSLError(1, '[SSL: TLSV1_UNRECOGNIZED_NAME] tlsv1 unrecognized name (_ssl.c:1077)')))
+  Status: FAILED
+
+[ID 308] Pitons, cirques and remparts of Reunion Island
+  Issue: missing
+  Details: Download failed: HTTPSConnectionPool(host='s.iha.com', port=443): Max retries exceeded with url: /6304500003554/Guest-house-bed-and-breakfast-Saint-joseph-Rougail-Mangue_3.jpeg (Caused by SSLError(SSLError(1, '[SSL: TLSV1_UNRECOGNIZED_NAME] tlsv1 unrecognized name (_ssl.c:1077)')))
+  Status: FAILED
+
+[ID 1053] Ancient and Primeval Beech Forests of the Carpathians and Other Regions of Europe
   Issue: missing
   Details: Download failed: HTTP 403
   Status: FAILED
 
-[ID None] Mbanza Kongo, Vestiges of the Capital of the former Kingdom of Kongo
+[ID 1054] Mbanza Kongo, Vestiges of the Capital of the former Kingdom of Kongo
   Issue: missing
   Details: Download failed: HTTP 403
   Status: FAILED
 
-[ID None] Jesuit Missions of the Guaranis: San Ignacio Mini, Santa Ana, Nuestra Señora de Loreto and Santa Maria Mayor (Argentina), Ruins of Sao Miguel das Missoes (Brazil)
+[ID 1055] Jesuit Missions of the Guaranis: San Ignacio Mini, Santa Ana, Nuestra Señora de Loreto and Santa Maria Mayor (Argentina), Ruins of Sao Miguel das Missoes (Brazil)
   Issue: missing
   Details: Download failed: HTTP 403
   Status: FAILED
 
-[ID None] Cueva de las Manos, Río Pinturas
+[ID 1056] Cueva de las Manos, Río Pinturas
   Issue: missing
   Details: Download failed: HTTP 403
   Status: FAILED
 
-[ID None] Península Valdés
+[ID 1057] Península Valdés
   Issue: missing
   Details: Download failed: HTTP 403
   Status: FAILED
 
-[ID None] Jesuit Block and Estancias of Córdoba
+[ID 1058] Jesuit Block and Estancias of Córdoba
   Issue: missing
   Details: Download failed: HTTP 403
   Status: FAILED
 
-[ID None] Los Alerces National Park
+[ID 1059] Los Alerces National Park
   Issue: missing
   Details: Download failed: HTTP 403
   Status: FAILED
 
-[ID None] ESMA Museum and Site of Memory – Former Clandestine Centre of Detention, Torture and Extermination
+[ID 1060] ESMA Museum and Site of Memory – Former Clandestine Centre of Detention, Torture and Extermination
   Issue: missing
   Details: Download failed: HTTP 403
   Status: FAILED
 
-[ID None] Budj Bim Cultural Landscape
+[ID 1061] Budj Bim Cultural Landscape
   Issue: missing
   Details: Download failed: HTTP 403
   Status: FAILED
 
-[ID None] Murujuga Cultural Landscape
+[ID 1062] Murujuga Cultural Landscape
   Issue: missing
   Details: Download failed: HTTP 403
   Status: FAILED
 
-[ID None] Palace and Gardens of Schönbrunn
+[ID 1063] Palace and Gardens of Schönbrunn
   Issue: missing
   Details: Download failed: HTTP 403
   Status: FAILED
 
-[ID None] Frontiers of the Roman Empire – The Danube Limes (Western Segment)
+[ID 1064] Frontiers of the Roman Empire – The Danube Limes (Western Segment)
   Issue: missing
   Details: Download failed: HTTP 403
   Status: FAILED
 
-[ID None] The Great Spa Towns of Europe
+[ID 1065] The Great Spa Towns of Europe
   Issue: missing
   Details: Download failed: HTTP 403
   Status: FAILED
 
-[ID None] Historic Centre of Sheki with the Khan’s Palace
+[ID 1066] Historic Centre of Sheki with the Khan’s Palace
   Issue: missing
   Details: Download failed: HTTP 403
   Status: FAILED
 
-[ID None] Hyrcanian Forests
+[ID 1067] Hyrcanian Forests
   Issue: missing
   Details: Download failed: HTTP 403
   Status: FAILED
 
-[ID None] Cultural Landscape of Khinalig People and “Köç Yolu” Transhumance Route
+[ID 1068] Cultural Landscape of Khinalig People and “Köç Yolu” Transhumance Route
   Issue: missing
   Details: Download failed: HTTP 403
   Status: FAILED
 
-[ID None] Dilmun Burial Mounds
+[ID 1069] Dilmun Burial Mounds
   Issue: missing
   Details: Download failed: HTTP 403
   Status: FAILED
 
-[ID None] Flemish Béguinages
+[ID 1070] Flemish Béguinages
   Issue: missing
   Details: Download failed: HTTP 403
   Status: FAILED
 
-[ID None] The Four Lifts on the Canal du Centre and their Environs, La Louvière and Le Roeulx (Hainaut)
-  Issue: missing
-  Details: Download failed: HTTP 403
-  Status: FAILED
-
-[ID None] Colonies of Benevolence
-  Issue: missing
-  Details: Download failed: HTTP 403
-  Status: FAILED
-
-... and 80 more
+... and 79 more
 
 NEW ENTRIES ADDED:
 ------------------------------------------------------------
-[NEW] Qinghai Hoh Xil
+[NEW] Cathedral of Notre-Dame, Former Abbey of Saint-Rémi and Palace of Tau, Reims
   Location: 
   Year: 
 
-[NEW] Fanjingshan
+[NEW] Historic Site of Lyon
   Location: 
   Year: 
 
-[NEW] Archaeological Ruins of Liangzhu City
+[NEW] Decorated Cave of Pont d’Arc, known as Grotte Chauvet-Pont d’Arc, Ardèche
   Location: 
   Year: 
 
-[NEW] Migratory Bird Sanctuaries along the Coast of Yellow Sea-Bohai Gulf of China
+[NEW] Taputapuātea
   Location: 
   Year: 
 
-[NEW] Quanzhou: Emporium of the World in Song-Yuan China
+[NEW] Chaîne des Puys - Limagne fault tectonic arena
   Location: 
   Year: 
 
-[NEW] Cultural Landscape of Old Tea Forests of the Jingmai Mountain in Pu’er
+[NEW] French Austral Lands and Seas
   Location: 
   Year: 
 
-[NEW] Badain Jaran Desert - Towers of Sand and Lakes
+[NEW] Cordouan Lighthouse
   Location: 
   Year: 
 
-[NEW] Beijing Central Axis: A Building Ensemble Exhibiting the Ideal Order of the Chinese Capital
+[NEW] Nice, Winter Resort Town of the Riviera
   Location: 
   Year: 
 
-[NEW] Xixia Imperial Tombs
+[NEW] The Maison Carrée of Nîmes
   Location: 
   Year: 
 
-[NEW] Los Katíos National Park
+[NEW] Volcanoes and Forests of Mount Pelée and the Pitons of Northern Martinique
   Location: 
   Year: 
 
-[NEW] San Agustín Archaeological Park
+[NEW] Te Henua Enata – The Marquesas Islands
   Location: 
   Year: 
 
-[NEW] Chiribiquete National Park – “The Maloca of the Jaguar”
+[NEW] Megaliths of Carnac and of the shores of Morbihan
   Location: 
   Year: 
 
-[NEW] Forest Massif of Odzala-Kokoua
+[NEW] Ivindo National Park
   Location: 
   Year: 
 
-[NEW] Area de Conservación Guanacaste
+[NEW] Gelati Monastery
   Location: 
   Year: 
 
-[NEW] Taï National Park
+[NEW] Colchic Rainforests and Wetlands
   Location: 
   Year: 
 
-[NEW] Comoé National Park
+[NEW] Castles of Augustusburg and Falkenlust at Brühl
   Location: 
   Year: 
 
-[NEW] Sudanese style mosques in northern Côte d’Ivoire
+[NEW] Hanseatic City of Lübeck
   Location: 
   Year: 
 
-[NEW] Episcopal Complex of the Euphrasian Basilica in the Historic Centre of Poreč
+[NEW] Abbey and Altenmünster of Lorsch
   Location: 
   Year: 
 
-[NEW] The Cathedral of St James in Šibenik
+[NEW] Mines of Rammelsberg, Historic Town of Goslar and Upper Harz Water Management System
   Location: 
   Year: 
 
-[NEW] Venetian Works of Defence between the 16th and 17th Centuries:Stato da Terra– WesternStato da Mar
+[NEW] Völklingen Ironworks
   Location: 
   Year: 
 
