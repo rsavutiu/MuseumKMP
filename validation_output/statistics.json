@@ -1,11 +1,11 @@
 {
-  "timestamp": "2026-01-15T18:28:14.525258",
+  "timestamp": "2026-01-17T16:51:47.221128",
   "statistics": {
     "language_issues": 17,
     "language_fixed": 0,
     "missing_authors": 0,
     "authors_fixed": 0,
-    "missing_images": 100,
+    "missing_images": 99,
     "images_downloaded": 0,
     "incorrect_images": 0,
     "missing_unesco_sites": 50,
@@ -14,7 +14,7 @@
   "issue_counts": {
     "language": 17,
     "authors": 0,
-    "images": 100,
+    "images": 99,
     "new_sites": 50
   }
 }

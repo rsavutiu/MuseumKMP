@@ -424,8 +424,9 @@ class UNESCOScraper:
             'description_zh': '',
             'description_ja': '',
             'images': [],
-            'author': 'UNESCO World Heritage Site',
-            'location': ''
+            'author': '',  # Will be set to country name
+            'location': '',
+            'country': ''
         }
 
         try:
@@ -434,6 +435,26 @@ class UNESCOScraper:
 
             self.driver.get(url)
             time.sleep(2)  # Wait for page to load
+
+            # Extract country from the page
+            try:
+                country_element = None
+                try:
+                    country_element = self.driver.find_element(By.XPATH, "//dt[contains(text(), 'States Parties')]/following-sibling::dd[1]")
+                except NoSuchElementException:
+                    try:
+                        country_element = self.driver.find_element(By.CSS_SELECTOR, ".list_site dd")
+                    except NoSuchElementException:
+                        pass
+
+                if country_element:
+                    country_text = country_element.text.strip()
+                    if country_text:
+                        details['country'] = country_text
+                        details['author'] = country_text
+                        logger.debug(f"    Found country: {country_text}")
+            except Exception as e:
+                logger.debug(f"    Could not extract country: {e}")
 
             # Get English description (default page)
             try:
@@ -537,8 +558,9 @@ class UNESCOScraper:
             'description_en': '',
             'description_fr': '',
             'images': [],
-            'author': 'UNESCO World Heritage Site',
-            'location': ''
+            'author': '',  # Will be set to country if found
+            'location': '',
+            'country': ''
         }
 
         try:
@@ -930,7 +952,7 @@ class DatabaseValidator:
         logger.info(f"Language validation complete. Found {self.report_gen.stats['language_issues']} issues")
 
     def validate_authors(self, entries: List[Dict]):
-        """Validate author fields"""
+        """Validate author fields - should be country name, not UNESCO"""
         logger.info("Validating author fields...")
 
         for entry in entries:
@@ -938,17 +960,12 @@ class DatabaseValidator:
                 self.report_gen.add_author_issue({
                     'id': entry['id'],
                     'name': entry['paintingname'],
-                    'status': 'NEEDS_MANUAL_FIX'
+                    'status': 'NEEDS_SCRAPING'
                 })
 
-                # Set default author
-                self.fixes.append({
-                    'type': 'update_author',
-                    'id': entry['id'],
-                    'name': entry['paintingname'],
-                    'author': 'UNESCO World Heritage Site'
-                })
-                self.report_gen.stats['authors_fixed'] += 1
+                # Note: We can't set a default here - need to scrape UNESCO to get country
+                # The fix_database_issues.py script should be run to fetch country names
+                logger.warning(f"  Entry {entry['id']} '{entry['paintingname']}' has no author - needs country from UNESCO")
 
         logger.info(f"Author validation complete. Found {self.report_gen.stats['missing_authors']} missing authors")
 
@@ -1079,7 +1096,7 @@ class DatabaseValidator:
                 'name': site['name'],
                 'description_en': details.get('description_en', site.get('short_description', '')),
                 'description_ro': desc_ro or '',
-                'author': 'UNESCO World Heritage Site',
+                'author': details.get('country', details.get('author', '')),  # Use country from scraped details
                 'location': site.get('location', ''),
                 'image_uri': image_uri,
                 'style': site.get('category', 'World Heritage')

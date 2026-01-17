@@ -222,8 +222,9 @@ class UNESCOScraper:
             'description_it': '',
             'description_ar': '',
             'images': [],
-            'author': 'UNESCO World Heritage Site',
-            'location': ''
+            'author': '',  # Will be set to country name when scraped
+            'location': '',
+            'country': ''
         }
 
         try:
@@ -235,6 +236,30 @@ class UNESCOScraper:
 
             # Dismiss any popups that might block clicks
             self._dismiss_popups()
+
+            # Extract country/countries from the page
+            try:
+                # UNESCO pages typically have country info in specific elements
+                # Try multiple selectors to find country information
+                country_element = None
+                try:
+                    # Try finding "States Parties" section which lists countries
+                    country_element = self.driver.find_element(By.XPATH, "//dt[contains(text(), 'States Parties')]/following-sibling::dd[1]")
+                except NoSuchElementException:
+                    try:
+                        # Alternative: Look for country in metadata
+                        country_element = self.driver.find_element(By.CSS_SELECTOR, ".list_site dd")
+                    except NoSuchElementException:
+                        pass
+
+                if country_element:
+                    country_text = country_element.text.strip()
+                    if country_text:
+                        details['country'] = country_text
+                        details['author'] = country_text  # Set author to country name
+                        logger.debug(f"    Found country: {country_text}")
+            except Exception as e:
+                logger.debug(f"    Could not extract country: {e}")
 
             # Get English description (default page)
             try:
@@ -304,9 +329,9 @@ class UNESCOScraper:
 
                         if text and len(text) > 50:  # Only save if substantial
                             details[f'description_{lang_code}'] = text.strip()
-                            logger.debug(f"    ✓ Got {lang_code} description ({len(text)} chars)")
+                            logger.info(f"    ✓ Got {lang_code} description ({len(text)} chars)")
                         else:
-                            logger.debug(f"    ✗ {lang_code} description too short or empty")
+                            logger.info(f"    ✗ {lang_code} description too short or empty")
 
                     except NoSuchElementException:
                         logger.debug(f"    ✗ No {lang_code} tab found")
@@ -349,8 +374,9 @@ class UNESCOScraper:
             'description_en': '',
             'description_fr': '',
             'images': [],
-            'author': 'UNESCO World Heritage Site',
-            'location': ''
+            'author': '',  # Will be set to country if found
+            'location': '',
+            'country': ''
         }
 
         try:

@@ -184,7 +184,7 @@ class DatabaseValidator:
                     # Take first URL
                     first_url = full_image_uri.split(',')[0].strip()
 
-                    logger.info(f"  Downloading image for [{entry['id']}] {site_name}")
+                    logger.info(f"  Downloading image for [{entry['id']}] {site_name} from {first_url}")
                     success, path, error = self.image_validator.download_image(first_url, site_name)
 
                     if success:
@@ -204,6 +204,7 @@ class DatabaseValidator:
                             'details': f'Download failed: {error}',
                             'status': 'FAILED'
                         })
+                        logger.error(f"  Downloading image failed at {first_url}")
                 else:
                     self.report_gen.add_image_issue({
                         'id': entry['id'],
