@@ -11,3 +11,8 @@ captures/
 .cxx
 /gradle/wrapper/gradle-wrapper.jar
 /tmpclaude*
+
+# Python
+__pycache__/
+*.pyc
+*.pyo
