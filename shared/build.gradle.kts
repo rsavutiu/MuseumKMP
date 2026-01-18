@@ -98,6 +98,8 @@ sqldelight {
     databases {
         create("MuseumDatabase") {
             packageName.set("com.museum.data.local")
+            schemaOutputDirectory.set(file("src/main/sqldelight/com/museum/data/local"))
+            version=1
         }
     }
 }

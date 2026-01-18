@@ -17,10 +17,10 @@ import com.google.android.gms.maps.model.LatLng
 import com.google.maps.android.clustering.ClusterItem
 import com.google.maps.android.clustering.algo.GridBasedAlgorithm
 import com.google.maps.android.compose.GoogleMap
-import com.google.maps.android.compose.clustering.Clustering
 import com.google.maps.android.compose.MapProperties
 import com.google.maps.android.compose.MapUiSettings
 import com.google.maps.android.compose.MapsComposeExperimentalApi
+import com.google.maps.android.compose.clustering.Clustering
 import com.google.maps.android.compose.clustering.rememberClusterManager
 import com.google.maps.android.compose.rememberCameraPositionState
 import com.museum.data.models.HeritageSite
@@ -77,29 +77,25 @@ fun MapScreen(
             )
         ) {
             val clusterManager = rememberClusterManager<SiteClusterItem>()
+            if (sitesWithCoordinates.isNotEmpty() && clusterManager!=null) {
+                Clustering(items = sitesWithCoordinates.map { site -> SiteClusterItem(site)}, clusterManager = clusterManager!!)
+            }
 
-            LaunchedEffect(clusterManager) {
+            // Update clusters only when the data changes, not on every recomposition
+            LaunchedEffect(sitesWithCoordinates) {
                 clusterManager?.let {
-                    it.algorithm = GridBasedAlgorithm()
-                    it.setOnClusterClickListener { cluster ->
-                        // Return false to allow the default behavior (zoom into cluster)
-                        false
-                    }
-                    it.setOnClusterItemInfoWindowClickListener { item ->
-                        onSiteClick(item.site.id)
-                    }
+                    it.clearItems()
+                    it.addItems(sitesWithCoordinates.map { site -> SiteClusterItem(site) })
+                    it.cluster()
                 }
             }
-
-            val clusterItems = remember(sitesWithCoordinates) {
-                sitesWithCoordinates.map { SiteClusterItem(it) }
-            }
-
-            clusterManager?.let { manager ->
-                Clustering(
-                    items = clusterItems,
-                    clusterManager = manager,
-                )
+            
+            // Set listeners once
+            LaunchedEffect(clusterManager) {
+                clusterManager?.let {
+                    it.setOnClusterClickListener { false } // Return false for default zoom behavior
+                    it.setOnClusterItemInfoWindowClickListener { item -> onSiteClick(item.site.id) }
+                }
             }
         }
     }
