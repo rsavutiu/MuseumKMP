@@ -163,7 +163,7 @@ class ImageProcessor:
                 q=query,
                 cx=self.google_search_engine_id,
                 searchType='image',
-                imgSize='xlarge',
+                imgSize='XLARGE',  # Must be uppercase
                 imgType='photo',
                 num=5  # Get top 5 results
             ).execute()
