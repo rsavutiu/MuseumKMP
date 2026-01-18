@@ -300,8 +300,8 @@ def main():
     parser.add_argument('--google-api-key', type=str, help='Google API key (or use GOOGLE_API_KEY env var)')
     parser.add_argument('--google-search-engine-id', type=str, help='Google Search Engine ID (or use GOOGLE_SEARCH_ENGINE_ID env var)')
     parser.add_argument('--limit', type=int, help='Limit number of entries to process (for testing)')
-    parser.add_argument('--min-width', type=int, default=800, help='Minimum image width (default: 800)')
-    parser.add_argument('--min-height', type=int, default=600, help='Minimum image height (default: 600)')
+    parser.add_argument('--min-width', type=int, default=400, help='Minimum image width (default: 400)')
+    parser.add_argument('--min-height', type=int, default=300, help='Minimum image height (default: 300)')
 
     args = parser.parse_args()
 

@@ -72,8 +72,8 @@ python scripts/reprocess_images.py
 ### With Custom Settings
 ```bash
 python scripts/reprocess_images.py \
-  --min-width 1024 \
-  --min-height 768 \
+  --min-width 400 \
+  --min-height 200 \
   --limit 50
 ```
 
