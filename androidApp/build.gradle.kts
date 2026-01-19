@@ -62,4 +62,5 @@ dependencies {
     implementation(libs.coil.network.ktor)
     implementation(libs.koin.android)
     implementation(libs.koin.compose)
+    implementation("androidx.palette:palette-ktx:1.0.0")
 }
