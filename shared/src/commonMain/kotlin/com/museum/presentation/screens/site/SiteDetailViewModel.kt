@@ -26,6 +26,7 @@ class SiteDetailViewModel(
     private fun loadSite() {
         coroutineScope.launch {
             repository.getSiteById(siteId)
+                .take(1)  // Only take the first emission to prevent infinite loop
                 .collect { result ->
                     _uiState.value = when (result) {
                         is Result.Success -> {

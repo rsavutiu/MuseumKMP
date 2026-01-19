@@ -31,6 +31,7 @@ class DetailViewModel(
         coroutineScope.launch {
             com.museum.utils.LOG("DetailViewModel.loadSite() - Coroutine LAUNCHED")
             repository.getSiteById(siteId)
+                .take(1)
                 .onEach { result ->
                     com.museum.utils.LOG("DetailViewModel.loadSite() - Flow EMITTED result: ${result::class.simpleName}")
                 }

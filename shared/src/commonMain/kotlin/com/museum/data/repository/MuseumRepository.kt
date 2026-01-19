@@ -11,6 +11,7 @@ import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.firstOrNull
 import kotlinx.coroutines.flow.map
+import kotlinx.coroutines.flow.onEach
 
 /**
  * Concrete implementation backed by HeritageSiteLocalDataSource.
@@ -37,8 +38,8 @@ class MuseumRepository(private val dataSource: HeritageSiteLocalDataSource) : IM
 
     override fun getSiteById(id: Long): Flow<Result<HeritageSite?>> {
         com.museum.utils.LOG("MuseumRepository.getSiteById() - CALLED for id=$id")
-        return dataSource.getSiteById(id)
-            .onEach { items ->
+        return dataSource.getSiteById(id).onEach {
+            items ->
                 com.museum.utils.LOG("MuseumRepository.getSiteById() - DataSource EMITTED ${items?.size ?: 0} items")
                 com.museum.utils.checkMainThread()
             }
@@ -50,7 +51,7 @@ class MuseumRepository(private val dataSource: HeritageSiteLocalDataSource) : IM
                         Result.Error(Exception("Site not found"))
                     }
                     else {
-                        com.museum.utils.LOG("MuseumRepository.getSiteById() - Site FOUND: ${firstItem.name}")
+                        com.museum.utils.LOG("MuseumRepository.getSiteById() - Site FOUND: ${firstItem.paintingname}")
                         Result.Success(firstItem.toHeritageSite())
                     }
                 }

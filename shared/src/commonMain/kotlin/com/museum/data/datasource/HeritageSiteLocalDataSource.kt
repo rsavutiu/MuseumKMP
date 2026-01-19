@@ -11,6 +11,7 @@ import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.firstOrNull
 import kotlinx.coroutines.flow.flowOn
+import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.withContext
 
 class HeritageSiteLocalDataSource(
@@ -33,8 +34,8 @@ class HeritageSiteLocalDataSource(
         com.museum.utils.LOG("HeritageSiteLocalDataSource.getSiteById() - CALLED for id=$id, creating Flow")
         return heritageQueries.selectById(id)
             .asFlow()
-            .mapToList(dispatcher)
-            .onEach { items ->
+            .mapToList(dispatcher).onEach {
+                items ->
                 com.museum.utils.LOG("HeritageSiteLocalDataSource.getSiteById() - Database EMITTED ${items?.size ?: 0} items for id=$id")
             }
             .flowOn(dispatcher)
