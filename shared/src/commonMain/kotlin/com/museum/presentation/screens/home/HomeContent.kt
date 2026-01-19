@@ -51,22 +51,22 @@ fun HomeContent(
         )
         is HomeUiState.Error -> EmptyState(message = uiState.message)
         is HomeUiState.Success -> {
-            Box(modifier.fillMaxSize()) {
-                // Always keep the MapView in composition to preserve its state
-                MapView(
-                    sites = uiState.sites,
-                    onSiteClick = onSiteClick,
-                    modifier = Modifier.fillMaxSize().alpha(if (viewMode == ViewMode.Map) 1f else 0f)
-                )
-
-                // The Grid view with its complex pre-loading logic is only composed when needed.
-                if (viewMode == ViewMode.Grid) {
+            // Only compose the active view to avoid memory issues
+            when (viewMode) {
+                ViewMode.Map -> {
+                    MapView(
+                        sites = uiState.sites,
+                        onSiteClick = onSiteClick,
+                        modifier = modifier.fillMaxSize()
+                    )
+                }
+                ViewMode.Grid -> {
                     GridViewWithPreloading(
                         sites = uiState.sites,
                         groupedSites = uiState.groupedSites,
                         onSiteClick = onSiteClick,
                         onFavoriteClick = onFavoriteClick,
-                        modifier = Modifier.fillMaxSize().alpha(if (viewMode == ViewMode.Grid) 1f else 0f)
+                        modifier = modifier.fillMaxSize()
                     )
                 }
             }
