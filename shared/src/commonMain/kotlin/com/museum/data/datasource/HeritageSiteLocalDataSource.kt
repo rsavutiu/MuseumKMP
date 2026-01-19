@@ -21,6 +21,7 @@ class HeritageSiteLocalDataSource(
     private val heritageQueries = database.heritageSiteQueries
 
     fun getAllSites(): Flow<List<Museum_item>> {
+        com.museum.utils.LOG("HeritageSiteLocalDataSource.getAllSites() - CALLED, creating Flow")
         return heritageQueries.selectAll()
             .asFlow()
             .mapToList(dispatcher)
@@ -28,9 +29,13 @@ class HeritageSiteLocalDataSource(
     }
 
     fun getSiteById(id: Long): Flow<List<Museum_item>?> {
+        com.museum.utils.LOG("HeritageSiteLocalDataSource.getSiteById() - CALLED for id=$id, creating Flow")
         return heritageQueries.selectById(id)
             .asFlow()
             .mapToList(dispatcher)
+            .onEach { items ->
+                com.museum.utils.LOG("HeritageSiteLocalDataSource.getSiteById() - Database EMITTED ${items?.size ?: 0} items for id=$id")
+            }
             .flowOn(dispatcher)
     }
 
@@ -66,18 +71,22 @@ class HeritageSiteLocalDataSource(
     }
 
     suspend fun updateFavorite(id: Long, isFavorite: Boolean) {
+        com.museum.utils.LOG("HeritageSiteLocalDataSource.updateFavorite() - CALLED id=$id, isFavorite=$isFavorite")
         withContext(dispatcher) {
             heritageQueries.updateFavorite(
                 isFavourite = if (isFavorite) "true" else "false",
                 id = id
             )
         }
+        com.museum.utils.LOG("HeritageSiteLocalDataSource.updateFavorite() - COMPLETE, DATABASE UPDATED")
     }
 
     suspend fun markAsViewed(id: Long) {
+        com.museum.utils.LOG("HeritageSiteLocalDataSource.markAsViewed() - CALLED id=$id")
         withContext(dispatcher) {
             heritageQueries.updateViewed(id)
         }
+        com.museum.utils.LOG("HeritageSiteLocalDataSource.markAsViewed() - COMPLETE, DATABASE UPDATED")
     }
 
     suspend fun getCount(): Long {

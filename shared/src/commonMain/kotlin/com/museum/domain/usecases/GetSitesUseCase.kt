@@ -6,5 +6,8 @@ import com.museum.domain.model.Result
 import kotlinx.coroutines.flow.Flow
 
 class GetSitesUseCase(private val repository: IMuseumRepository) {
-    operator fun invoke(): Flow<Result<List<HeritageSite>>> = repository.getAllSites()
+    operator fun invoke(): Flow<Result<List<HeritageSite>>> {
+        com.museum.utils.LOG("GetSitesUseCase.invoke() - CALLED")
+        return repository.getAllSites()
+    }
 }
