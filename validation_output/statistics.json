@@ -1,20 +1,20 @@
 {
-  "timestamp": "2026-01-17T16:51:47.221128",
+  "timestamp": "2026-01-19T11:38:45.388821",
   "statistics": {
-    "language_issues": 17,
-    "language_fixed": 0,
+    "language_issues": 2,
+    "language_fixed": 1,
     "missing_authors": 0,
     "authors_fixed": 0,
-    "missing_images": 99,
+    "missing_images": 1,
     "images_downloaded": 0,
     "incorrect_images": 0,
-    "missing_unesco_sites": 50,
-    "sites_added": 50
+    "missing_unesco_sites": 0,
+    "sites_added": 0
   },
   "issue_counts": {
-    "language": 17,
+    "language": 2,
     "authors": 0,
-    "images": 99,
-    "new_sites": 50
+    "images": 1,
+    "new_sites": 0
   }
 }

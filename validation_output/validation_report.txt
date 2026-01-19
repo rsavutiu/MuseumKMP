@@ -1,291 +1,35 @@
 ============================================================
 UNESCO HERITAGE DATABASE VALIDATION REPORT
 ============================================================
-Generated: 2026-01-17 16:51:47
+Generated: 2026-01-19 11:38:45
 Database: heritage_sites.db
 
 SUMMARY:
 ------------------------------------------------------------
-✓ Language Issues: 17 found, 0 fixed
+✓ Language Issues: 2 found, 1 fixed
 ✓ Missing Authors: 0 found, 0 fixed
-✓ Missing Images: 99 found, 0 downloaded
+✓ Missing Images: 1 found, 0 downloaded
 ✓ Incorrect Images: 0 found (flagged for review)
-✓ Missing UNESCO Sites: 50 found, 50 added
+✓ Missing UNESCO Sites: 0 found, 0 added
 
 LANGUAGE ISSUES DETAIL:
 ------------------------------------------------------------
-[ID 3] Historic Centres of Berat and Gjirokastra 
-  Issue: ro_in_en_field
-  Fix: move_and_fetch_en
-  Status: NEEDS_MANUAL_FIX
-
-[ID 117] Dinosaur Provincial Park
-  Issue: en_in_ro_field
-  Fix: move_and_fetch_ro
-  Status: PENDING
-
-[ID 121] Historic District of Old Quebec
-  Issue: en_in_ro_field
-  Fix: move_and_fetch_ro
-  Status: PENDING
-
-[ID 124] Miguasha National Park
-  Issue: en_in_ro_field
-  Fix: move_and_fetch_ro
-  Status: PENDING
-
-[ID 170] Kaiping Diaolou and Villages
-  Issue: en_in_ro_field
-  Fix: move_and_fetch_ro
-  Status: PENDING
-
-[ID 172] Yin Xu
-  Issue: en_in_ro_field
-  Fix: move_and_fetch_ro
-  Status: PENDING
-
-[ID 189] Los Katios National Park
-  Issue: en_in_ro_field
-  Fix: move_and_fetch_ro
-  Status: PENDING
-
-[ID 198] Tai National Park
-  Issue: en_in_ro_field
-  Fix: move_and_fetch_ro
-  Status: PENDING
-
-[ID 217] Paphos
-  Issue: ro_in_en_field
-  Fix: move_and_fetch_en
-  Status: NEEDS_MANUAL_FIX
-
-[ID 281] Palace and Park of Fontainebleau
-  Issue: en_in_ro_field
-  Fix: move_and_fetch_ro
-  Status: PENDING
-
 [ID 405] Fatehpur Sikri
-  Issue: en_in_ro_field
-  Fix: move_and_fetch_ro
-  Status: PENDING
-
-[ID 444] Masjed-e Jame of Isfahan
-  Issue: en_in_ro_field
-  Fix: move_and_fetch_ro
-  Status: PENDING
-
-[ID 507] Syracuse and the Rocky Necropolis of Pantalica
-  Issue: en_in_ro_field
-  Fix: move_and_fetch_ro
-  Status: PENDING
+  Issue: language_swap
+  Fix: swap_fields
+  Status: FIXED
 
 [ID 542] Mausoleum of Khoja Ahmed Yasawi
   Issue: en_in_ro_field
   Fix: move_and_fetch_ro
   Status: PENDING
 
-[ID 543] Petroglyphs within the Archaeological Landscape of Tamgaly
-  Issue: en_in_ro_field
-  Fix: move_and_fetch_ro
-  Status: PENDING
-
-[ID 1004] Complex of Hué Monuments
-  Issue: en_in_ro_field
-  Fix: move_and_fetch_ro
-  Status: PENDING
-
-[ID 1045] Western Tien-Shan
-  Issue: en_in_ro_field
-  Fix: move_and_fetch_ro
-  Status: PENDING
-
 IMAGE VALIDATION:
 ------------------------------------------------------------
-[ID 215] Urban Historic Centre of Cienfuegos
+[ID 1184] Žatec and the Landscape of Saaz Hops
   Issue: missing
-  Details: Download failed: HTTPSConnectionPool(host='s.iha.com', port=443): Max retries exceeded with url: /7813700007254/Guest-house-bed-and-breakfast-Cienfuegos-Hostal-Don-Jose_7.jpeg (Caused by SSLError(SSLError(1, '[SSL: TLSV1_UNRECOGNIZED_NAME] tlsv1 unrecognized name (_ssl.c:1077)')))
+  Details: Download failed: HTTP 404
   Status: FAILED
-
-[ID 308] Pitons, cirques and remparts of Reunion Island
-  Issue: missing
-  Details: Download failed: HTTPSConnectionPool(host='s.iha.com', port=443): Max retries exceeded with url: /6304500003554/Guest-house-bed-and-breakfast-Saint-joseph-Rougail-Mangue_3.jpeg (Caused by SSLError(SSLError(1, '[SSL: TLSV1_UNRECOGNIZED_NAME] tlsv1 unrecognized name (_ssl.c:1077)')))
-  Status: FAILED
-
-[ID 1053] Ancient and Primeval Beech Forests of the Carpathians and Other Regions of Europe
-  Issue: missing
-  Details: Download failed: HTTP 403
-  Status: FAILED
-
-[ID 1054] Mbanza Kongo, Vestiges of the Capital of the former Kingdom of Kongo
-  Issue: missing
-  Details: Download failed: HTTP 403
-  Status: FAILED
-
-[ID 1055] Jesuit Missions of the Guaranis: San Ignacio Mini, Santa Ana, Nuestra Señora de Loreto and Santa Maria Mayor (Argentina), Ruins of Sao Miguel das Missoes (Brazil)
-  Issue: missing
-  Details: Download failed: HTTP 403
-  Status: FAILED
-
-[ID 1056] Cueva de las Manos, Río Pinturas
-  Issue: missing
-  Details: Download failed: HTTP 403
-  Status: FAILED
-
-[ID 1057] Península Valdés
-  Issue: missing
-  Details: Download failed: HTTP 403
-  Status: FAILED
-
-[ID 1058] Jesuit Block and Estancias of Córdoba
-  Issue: missing
-  Details: Download failed: HTTP 403
-  Status: FAILED
-
-[ID 1059] Los Alerces National Park
-  Issue: missing
-  Details: Download failed: HTTP 403
-  Status: FAILED
-
-[ID 1060] ESMA Museum and Site of Memory – Former Clandestine Centre of Detention, Torture and Extermination
-  Issue: missing
-  Details: Download failed: HTTP 403
-  Status: FAILED
-
-[ID 1061] Budj Bim Cultural Landscape
-  Issue: missing
-  Details: Download failed: HTTP 403
-  Status: FAILED
-
-[ID 1062] Murujuga Cultural Landscape
-  Issue: missing
-  Details: Download failed: HTTP 403
-  Status: FAILED
-
-[ID 1063] Palace and Gardens of Schönbrunn
-  Issue: missing
-  Details: Download failed: HTTP 403
-  Status: FAILED
-
-[ID 1064] Frontiers of the Roman Empire – The Danube Limes (Western Segment)
-  Issue: missing
-  Details: Download failed: HTTP 403
-  Status: FAILED
-
-[ID 1065] The Great Spa Towns of Europe
-  Issue: missing
-  Details: Download failed: HTTP 403
-  Status: FAILED
-
-[ID 1066] Historic Centre of Sheki with the Khan’s Palace
-  Issue: missing
-  Details: Download failed: HTTP 403
-  Status: FAILED
-
-[ID 1067] Hyrcanian Forests
-  Issue: missing
-  Details: Download failed: HTTP 403
-  Status: FAILED
-
-[ID 1068] Cultural Landscape of Khinalig People and “Köç Yolu” Transhumance Route
-  Issue: missing
-  Details: Download failed: HTTP 403
-  Status: FAILED
-
-[ID 1069] Dilmun Burial Mounds
-  Issue: missing
-  Details: Download failed: HTTP 403
-  Status: FAILED
-
-[ID 1070] Flemish Béguinages
-  Issue: missing
-  Details: Download failed: HTTP 403
-  Status: FAILED
-
-... and 79 more
-
-NEW ENTRIES ADDED:
-------------------------------------------------------------
-[NEW] Cathedral of Notre-Dame, Former Abbey of Saint-Rémi and Palace of Tau, Reims
-  Location: 
-  Year: 
-
-[NEW] Historic Site of Lyon
-  Location: 
-  Year: 
-
-[NEW] Decorated Cave of Pont d’Arc, known as Grotte Chauvet-Pont d’Arc, Ardèche
-  Location: 
-  Year: 
-
-[NEW] Taputapuātea
-  Location: 
-  Year: 
-
-[NEW] Chaîne des Puys - Limagne fault tectonic arena
-  Location: 
-  Year: 
-
-[NEW] French Austral Lands and Seas
-  Location: 
-  Year: 
-
-[NEW] Cordouan Lighthouse
-  Location: 
-  Year: 
-
-[NEW] Nice, Winter Resort Town of the Riviera
-  Location: 
-  Year: 
-
-[NEW] The Maison Carrée of Nîmes
-  Location: 
-  Year: 
-
-[NEW] Volcanoes and Forests of Mount Pelée and the Pitons of Northern Martinique
-  Location: 
-  Year: 
-
-[NEW] Te Henua Enata – The Marquesas Islands
-  Location: 
-  Year: 
-
-[NEW] Megaliths of Carnac and of the shores of Morbihan
-  Location: 
-  Year: 
-
-[NEW] Ivindo National Park
-  Location: 
-  Year: 
-
-[NEW] Gelati Monastery
-  Location: 
-  Year: 
-
-[NEW] Colchic Rainforests and Wetlands
-  Location: 
-  Year: 
-
-[NEW] Castles of Augustusburg and Falkenlust at Brühl
-  Location: 
-  Year: 
-
-[NEW] Hanseatic City of Lübeck
-  Location: 
-  Year: 
-
-[NEW] Abbey and Altenmünster of Lorsch
-  Location: 
-  Year: 
-
-[NEW] Mines of Rammelsberg, Historic Town of Goslar and Upper Harz Water Management System
-  Location: 
-  Year: 
-
-[NEW] Völklingen Ironworks
-  Location: 
-  Year: 
-
-... and 30 more
 
 
 SQL FIXES GENERATED:

@@ -209,6 +209,7 @@ class ImageValidator:
         if png_path.exists():
             return True, png_path
 
+        logger.info(f"  Resource missing name: {resource_name} for site {site_name}")
         return False, None
 
     def download_image(self, url: str, site_name: str) -> Tuple[bool, Optional[Path], Optional[str]]:
