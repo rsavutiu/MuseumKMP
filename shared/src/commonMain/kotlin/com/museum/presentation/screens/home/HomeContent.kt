@@ -88,31 +88,27 @@ private fun GridViewWithPreloading(
     val gridState = rememberLazyGridState()
     var initialPreloadComplete by remember { mutableStateOf(false) }
 
+    // Preload only the first few images to avoid OOM
     LaunchedEffect(sites) {
         imagePreloader.preloadImages(
             sites = sites,
             currentIndex = 0,
-            preloadCount = 12
+            preloadCount = 6  // Reduced from 12 to 6
         )
         initialPreloadComplete = true
-
-        imagePreloader.preloadImages(
-            sites = sites,
-            currentIndex = 12,
-            preloadCount = 30
-        )
     }
 
     if (!initialPreloadComplete) {
         LoadingIndicator()
     } else {
+        // Preload ahead as user scrolls, but keep it minimal
         LaunchedEffect(gridState.firstVisibleItemIndex) {
-            if (gridState.firstVisibleItemIndex > 0) {
-                val currentIndex = gridState.firstVisibleItemIndex
+            val currentIndex = gridState.firstVisibleItemIndex
+            if (currentIndex > 0) {
                 imagePreloader.preloadImages(
                     sites = sites,
-                    currentIndex = currentIndex + 12,
-                    preloadCount = 40
+                    currentIndex = currentIndex + 6,
+                    preloadCount = 12  // Reduced from 40 to 12
                 )
             }
         }
