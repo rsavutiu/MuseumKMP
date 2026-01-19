@@ -46,6 +46,7 @@ import com.museum.data.models.HeritageSite
 import com.museum.presentation.components.EmptyState
 import com.museum.presentation.components.LoadingIndicator
 import com.museum.presentation.components.MarqueeText
+import com.museum.utils.LOG
 import com.museum.utils.getDrawableResourceId
 import com.museum.utils.getPrimaryColor
 import com.museum.utils.toDrawableResourceName
@@ -140,6 +141,9 @@ private fun SiteDetailContent(
         val drawableId = getDrawableResourceId(resourceName)
         val imageUrl = site.imageUrl?.split(",")?.firstOrNull()?.trim()
         val imageModel = if (drawableId != 0) drawableId else imageUrl
+        if (drawableId == 0) {
+            LOG("ERROR WE COULD NOT FIND DRAWABLE ID FOR $resourceName  from ${site.name}")
+        }
 
         if (imageModel != null) {
             AsyncImage(

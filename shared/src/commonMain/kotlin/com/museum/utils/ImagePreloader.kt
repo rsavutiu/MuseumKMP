@@ -49,6 +49,9 @@ class ImagePreloader(
                     isRemoteUrl -> imageUrl // Use remote URL
                     else -> null // Nothing to preload
                 }
+                if (drawableId == 0) {
+                    LOG("ERROR WE COULD NOT FIND DRAWABLE ID FOR $resourceName  from ${site.name}")
+                }
 
                 imageData?.let { data ->
                     val request = ImageRequest.Builder(context)

@@ -22,10 +22,12 @@ import coil3.compose.AsyncImage
 import coil3.compose.LocalPlatformContext
 import coil3.request.ImageRequest
 import com.museum.data.models.HeritageSite
+import com.museum.utils.LOG
 import com.museum.utils.getBackgroundColor
 import com.museum.utils.getCardBackgroundColor
 import com.museum.utils.getDrawableResourceId
 import com.museum.utils.getThumbnailCacheKey
+import com.museum.utils.toDrawableResourceName
 
 @Composable
 fun SiteCard(
@@ -57,7 +59,10 @@ fun SiteCard(
                     .clip(RoundedCornerShape(8.dp))
                     .background(site.getBackgroundColor())
             ) {
-                val drawableId = getDrawableResourceId(site.name)
+                val drawableId = getDrawableResourceId(site.name.toDrawableResourceName())
+                if (drawableId == 0) {
+                    LOG("ERROR WE COULD NOT FIND DRAWABLE ID FOR ${site.name}")
+                }
 
                 // Use local drawable first, fallback to URL for thumbnails
                 val imageModel = if (drawableId != 0) {
