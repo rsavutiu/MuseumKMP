@@ -19,6 +19,7 @@ class HeritageSiteLocalDataSource(
 ) {
     private val database = MuseumDatabase(driverFactory.createDriver())
     private val heritageQueries = database.heritageSiteQueries
+    private val authorQueries = database.authorsQueries
 
     fun getAllSites(): Flow<List<Museum_item>> {
         return heritageQueries.selectAll()
@@ -83,6 +84,13 @@ class HeritageSiteLocalDataSource(
     suspend fun getCount(): Long {
         return withContext(dispatcher) {
             heritageQueries.countAll().executeAsOne()
+        }
+    }
+
+    suspend fun getCountryTranslations(countryNames: List<String>): Map<String, com.museum.data.SelectCountryTranslations> {
+        return withContext(dispatcher) {
+            val results = authorQueries.selectCountryTranslations(countryNames).executeAsList()
+            results.associateBy { it.name ?: "" }
         }
     }
 }

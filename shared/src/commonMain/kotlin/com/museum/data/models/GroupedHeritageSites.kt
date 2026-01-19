@@ -1,6 +1,6 @@
 package com.museum.data.models
 
 data class CountrySiteGroup(
-    val country: String,
+    val country: Country,
     val sites: List<HeritageSite>
 )

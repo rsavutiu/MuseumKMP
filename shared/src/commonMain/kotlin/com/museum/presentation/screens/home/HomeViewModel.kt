@@ -1,8 +1,10 @@
 ﻿package com.museum.presentation.screens.home
 
 import androidx.lifecycle.ViewModel
+import com.museum.data.models.Country
 import com.museum.data.models.CountrySiteGroup
 import com.museum.data.models.HeritageSite
+import com.museum.data.repository.IMuseumRepository
 import com.museum.domain.model.Result
 import com.museum.domain.usecases.GetSitesUseCase
 import com.museum.domain.usecases.SearchSiteUseCase
@@ -16,6 +18,7 @@ class HomeViewModel(
     private val getSitesUseCase: GetSitesUseCase,
     private val searchSiteUseCase: SearchSiteUseCase,
     private val toggleFavoriteUseCase: ToggleFavoriteUseCase,
+    private val repository: IMuseumRepository,
     private val coroutineScope: CoroutineScope
 ): ViewModel() {
     private val _searchQuery = MutableStateFlow("")
@@ -39,19 +42,20 @@ class HomeViewModel(
                     if (query.isBlank()) getSitesUseCase() else searchSiteUseCase(query)
                 }
                 .collect { result ->
-                    _uiState.value = when (result) {
+                    when (result) {
                         is Result.Success -> {
                             if (result.data.isEmpty()) {
-                                HomeUiState.Empty
+                                _uiState.value = HomeUiState.Empty
                             } else {
-                                HomeUiState.Success(
+                                val groupedSites = groupSitesByCountry(result.data)
+                                _uiState.value = HomeUiState.Success(
                                     sites = result.data,
-                                    groupedSites = groupSitesByCountry(result.data)
+                                    groupedSites = groupedSites
                                 )
                             }
                         }
                         is Result.Error -> {
-                            HomeUiState.Error(result.exception.message ?: "Unknown error")
+                            _uiState.value = HomeUiState.Error(result.exception.message ?: "Unknown error")
                         }
                     }
                 }
@@ -72,22 +76,33 @@ class HomeViewModel(
         _viewMode.value = mode
     }
 
-    private fun groupSitesByCountry(sites: List<HeritageSite>): List<CountrySiteGroup> {
+    private suspend fun groupSitesByCountry(sites: List<HeritageSite>): List<CountrySiteGroup> {
         // Flatten sites: duplicate sites with multiple countries
-        val flattenedSites = sites.flatMap { site ->
+        val flattenedSites: List<Pair<String, HeritageSite>> = sites.flatMap { site ->
             site.countries.map { country -> country to site }
         }
 
         // Group by country
-        val grouped = flattenedSites.groupBy { it.first }
+        val grouped: Map<String, List<Pair<String, HeritageSite>>> = flattenedSites.groupBy { it.first }
+
+        // Get all unique country names
+        val countryNames: List<String> = grouped.keys.toList()
+
+        // Fetch country translations
+        val countryTranslations: Map<String, Country> = when (val result = repository.getCountryTranslations(countryNames)) {
+            is Result.Success -> result.data
+            is Result.Error -> emptyMap()
+        }
 
         // Sort countries alphabetically and sites within each country
         return grouped.entries
-            .sortedBy { it.key }
-            .map { (country, pairs) ->
+            .sortedBy { entry -> entry.key }
+            .map { entry ->
+                val countryName = entry.key
+                val pairs = entry.value
                 CountrySiteGroup(
-                    country = country,
-                    sites = pairs.map { it.second }.sortedBy { it.name }
+                    country = countryTranslations[countryName] ?: Country(name = countryName),
+                    sites = pairs.map { pair -> pair.second }.sortedBy { site -> site.name }
                 )
             }
     }

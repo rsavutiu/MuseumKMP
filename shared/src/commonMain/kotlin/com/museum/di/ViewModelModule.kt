@@ -20,6 +20,7 @@ val viewModelModule = module {
             getSitesUseCase = get(),
             searchSiteUseCase = get(),
             toggleFavoriteUseCase = get(),
+            repository = get(),
             coroutineScope = get()
         )
     }

@@ -58,3 +58,8 @@ SELECT * FROM authors;
 
 selectByName:
 SELECT * FROM authors WHERE name = ?;
+
+selectCountryTranslations:
+SELECT name, name_ro, name_it, name_es, name_de, name_fr, name_pt, name_ru, name_ar, name_zh, name_ja
+FROM authors
+WHERE name IN ?;

@@ -3,6 +3,7 @@
 import com.museum.data.datasource.HeritageSiteLocalDataSource
 import com.museum.data.mapper.HeritageSiteMapper.toHeritageSite
 import com.museum.data.mapper.HeritageSiteMapper.toHeritageSites
+import com.museum.data.models.Country
 import com.museum.data.models.HeritageSite
 import com.museum.domain.model.Result
 import kotlinx.coroutines.flow.Flow
@@ -71,6 +72,30 @@ class MuseumRepository(private val dataSource: HeritageSiteLocalDataSource) : IM
     override suspend fun getSiteCount(): Result<Long> {
         return try {
             Result.Success(dataSource.getCount())
+        } catch (e: Exception) {
+            Result.Error(e)
+        }
+    }
+
+    override suspend fun getCountryTranslations(countryNames: List<String>): Result<Map<String, Country>> {
+        return try {
+            val translations = dataSource.getCountryTranslations(countryNames)
+            val countries = translations.mapValues { (_, translation) ->
+                Country(
+                    name = translation.name ?: "",
+                    nameRo = translation.name_ro,
+                    nameIt = translation.name_it,
+                    nameEs = translation.name_es,
+                    nameDe = translation.name_de,
+                    nameFr = translation.name_fr,
+                    namePt = translation.name_pt,
+                    nameRu = translation.name_ru,
+                    nameAr = translation.name_ar,
+                    nameZh = translation.name_zh,
+                    nameJa = translation.name_ja
+                )
+            }
+            Result.Success(countries)
         } catch (e: Exception) {
             Result.Error(e)
         }

@@ -2,14 +2,18 @@ package com.museum.presentation.screens.home
 
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.GridItemSpan
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.foundation.lazy.grid.items
 import androidx.compose.foundation.lazy.grid.rememberLazyGridState
+import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -84,7 +88,6 @@ private fun GridViewWithPreloading(
     val gridState = rememberLazyGridState()
     var initialPreloadComplete by remember { mutableStateOf(false) }
 
-    // Use the original sites list for preloading (no duplicates)
     LaunchedEffect(sites) {
         imagePreloader.preloadImages(
             sites = sites,
@@ -132,18 +135,27 @@ private fun GridViewWithPreloading(
             }
 
             groupedSites.forEach { group ->
-                // Country header
+                // Country header with divider
                 item(span = { GridItemSpan(maxLineSpan) }) {
-                    Text(
-                        text = "${group.country} (${group.sites.size})",
-                        style = MaterialTheme.typography.headlineSmall,
-                        color = MaterialTheme.colorScheme.primary,
-                        modifier = Modifier.padding(top = 16.dp, bottom = 8.dp)
-                    )
+                    Column(
+                        modifier = Modifier.fillMaxWidth()
+                    ) {
+                        Text(
+                            text = "${group.country.getLocalizedName()} (${group.sites.size})",
+                            style = MaterialTheme.typography.headlineSmall,
+                            color = MaterialTheme.colorScheme.primary,
+                            modifier = Modifier.padding(top = 16.dp, bottom = 8.dp)
+                        )
+                        HorizontalDivider(
+                            modifier = Modifier.fillMaxWidth(),
+                            thickness = 1.dp,
+                            color = MaterialTheme.colorScheme.primary
+                        )
+                    }
                 }
 
                 // Sites for this country
-                items(items = group.sites, key = { "${it.id}_${it.name}_${group.country}" }) { site ->
+                items(items = group.sites, key = { "${it.id}_${it.name}_${group.country.name}" }) { site ->
                     val onFavorite = remember(site) {
                         { onFavoriteClick(site) }
                     }
