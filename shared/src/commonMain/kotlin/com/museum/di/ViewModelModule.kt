@@ -11,11 +11,13 @@ import org.koin.dsl.module
 val viewModelModule = module {
     // Provide a CoroutineScope for ViewModels
     factory {
+        com.museum.utils.LOG("DI - Creating NEW CoroutineScope")
         CoroutineScope(SupervisorJob() + Dispatchers.Main)
     }
 
     // HomeViewModel - Singleton (single instance for the entire app)
     single {
+        com.museum.utils.LOG("DI - Creating HomeViewModel (SINGLETON)")
         HomeViewModel(
             getSitesUseCase = get(),
             searchSiteUseCase = get(),
@@ -28,8 +30,10 @@ val viewModelModule = module {
     // SiteDetailViewModel - Factory with parameter
     // Use parametersOf() for siteId
     factory { params ->
+        val siteId = params.get<Long>()
+        com.museum.utils.LOG("DI - Creating NEW SiteDetailViewModel for siteId=$siteId")
         SiteDetailViewModel(
-            siteId = params.get(),
+            siteId = siteId,
             repository = get(),
             toggleFavoriteUseCase = get(),
             coroutineScope = get()
@@ -39,9 +43,11 @@ val viewModelModule = module {
     // DetailViewModel - Factory with parameter
     // Use parametersOf() for siteId
     factory { params ->
+        val siteId = params.get<Long>()
+        com.museum.utils.LOG("DI - Creating NEW DetailViewModel for siteId=$siteId")
         DetailViewModel(
-            siteId = params.get(),
-            getSitesUseCase = get(),
+            siteId = siteId,
+            repository = get(),
             wallpaperService = get(),
             coroutineScope = get()
         )

@@ -32,7 +32,9 @@ fun DetailScreen(
     onNavigateBack: () -> Unit,
     modifier: Modifier = Modifier
 ) {
+    com.museum.utils.LOG("DetailScreen - COMPOSING")
     val uiState by viewModel.uiState.collectAsState()
+    com.museum.utils.LOG("DetailScreen - uiState collected: ${uiState::class.simpleName}")
     val wallpaperStatus by viewModel.wallpaperStatus.collectAsState()
     val snackbarHostState = remember { SnackbarHostState() }
 
@@ -121,6 +123,15 @@ fun ZoomableImage(
 ) {
     var scale by remember { mutableStateOf(1f) }
     var offset by remember { mutableStateOf(Offset.Zero) }
+    val context = LocalPlatformContext.current
+
+    // Clear memory cache when this composable is disposed
+    DisposableEffect(Unit) {
+        onDispose {
+            // Request garbage collection when leaving detail screen
+            System.gc()
+        }
+    }
 
     Box(
         modifier = modifier
@@ -144,12 +155,14 @@ fun ZoomableImage(
         if (imageUrl.isNullOrBlank()) {
             Text("No image available")
         } else {
-            val context = LocalPlatformContext.current
             val finalImageUrl = imageUrl.split(",").firstOrNull()?.trim()
 
             AsyncImage(
                 model = withNetworkTrafficTag {ImageRequest.Builder(context)
                     .data(finalImageUrl)
+                    .size(800, 800) // Limit to 800x800 to prevent OOM (sufficient for most phones)
+                    .memoryCachePolicy(coil3.request.CachePolicy.ENABLED)
+                    .diskCachePolicy(coil3.request.CachePolicy.ENABLED)
                     .build() },
                 contentDescription = siteName,
                 modifier = Modifier

@@ -31,19 +31,33 @@ class HomeViewModel(
     val viewMode: StateFlow<ViewMode> = _viewMode.asStateFlow()
 
     init {
+        com.museum.utils.LOG("HomeViewModel.init() - CREATED")
         loadSites()
     }
 
     @OptIn(ExperimentalCoroutinesApi::class)
     private fun loadSites() {
+        com.museum.utils.LOG("HomeViewModel.loadSites() - STARTED")
         coroutineScope.launch {
+            com.museum.utils.LOG("HomeViewModel.loadSites() - Coroutine LAUNCHED")
             searchQuery
+                .onEach { query ->
+                    com.museum.utils.LOG("HomeViewModel.loadSites() - searchQuery EMITTED: '$query'")
+                }
                 .flatMapLatest { query ->
-                    if (query.isBlank()) getSitesUseCase() else searchSiteUseCase(query)
+                    com.museum.utils.LOG("HomeViewModel.loadSites() - flatMapLatest TRIGGERED for query='$query'")
+                    val flow = if (query.isBlank()) getSitesUseCase() else searchSiteUseCase(query)
+                    com.museum.utils.LOG("HomeViewModel.loadSites() - flatMapLatest RETURNING flow")
+                    flow
+                }
+                .onEach { result ->
+                    com.museum.utils.LOG("HomeViewModel.loadSites() - Flow EMITTED result: ${result::class.simpleName}, dataSize=${if (result is Result.Success) result.data.size else "N/A"}")
                 }
                 .collect { result ->
+                    com.museum.utils.LOG("HomeViewModel.loadSites() - collect() CALLED, result type=${result::class.simpleName}")
                     when (result) {
                         is Result.Success -> {
+                            com.museum.utils.LOG("HomeViewModel.loadSites() - Creating Success state with ${result.data.size} sites")
                             if (result.data.isEmpty()) {
                                 _uiState.value = HomeUiState.Empty
                             } else {
@@ -55,24 +69,29 @@ class HomeViewModel(
                             }
                         }
                         is Result.Error -> {
+                            com.museum.utils.LOG("HomeViewModel.loadSites() - Creating Error state: ${result.exception.message}")
                             _uiState.value = HomeUiState.Error(result.exception.message ?: "Unknown error")
                         }
                     }
+                    com.museum.utils.LOG("HomeViewModel.loadSites() - _uiState.value SET COMPLETE")
                 }
         }
     }
 
     fun onSearchQueryChange(query: String) {
+        com.museum.utils.LOG("HomeViewModel.onSearchQueryChange() - CALLED with query='$query'")
         _searchQuery.value = query
     }
 
     fun onFavoriteClick(site: HeritageSite) {
+        com.museum.utils.LOG("HomeViewModel.onFavoriteClick() - CALLED for site ${site.id}:${site.name}")
         coroutineScope.launch {
             toggleFavoriteUseCase(site)
         }
     }
 
     fun setViewMode(mode: ViewMode) {
+        com.museum.utils.LOG("HomeViewModel.setViewMode() - CALLED with mode=$mode")
         _viewMode.value = mode
     }
 

@@ -54,12 +54,18 @@ fun AppNavigation() {
                 route = "detail/{siteId}",
                 arguments = listOf(navArgument("siteId") { type = NavType.LongType })
             ) { backStackEntry ->
+                LOG("AppNavigation - COMPOSING detail route")
                 val siteId = backStackEntry.arguments?.getLong("siteId") ?: return@composable
+                LOG("AppNavigation - detail route siteId=$siteId")
                 val viewModel: DetailViewModel = koinViewModel { parametersOf(siteId) }
+                LOG("AppNavigation - DetailViewModel obtained: $viewModel")
 
                 DetailScreen(
                     viewModel = viewModel,
-                    onNavigateBack = { navController.popBackStack() }
+                    onNavigateBack = {
+                        LOG("AppNavigation - detail onNavigateBack CALLED")
+                        navController.popBackStack()
+                    }
                 )
             }
         }
