@@ -55,23 +55,30 @@ class HomeViewModel(
                 }
                 .collect { result ->
                     com.museum.utils.LOG("HomeViewModel.loadSites() - collect() CALLED, result type=${result::class.simpleName}")
-                    when (result) {
-                        is Result.Success -> {
-                            com.museum.utils.LOG("HomeViewModel.loadSites() - Creating Success state with ${result.data.size} sites")
-                            if (result.data.isEmpty()) {
-                                _uiState.value = HomeUiState.Empty
-                            } else {
-                                val groupedSites = groupSitesByCountry(result.data)
-                                _uiState.value = HomeUiState.Success(
-                                    sites = result.data,
-                                    groupedSites = groupedSites
-                                )
+                    com.museum.utils.checkMainThread()
+                    val newState = com.museum.utils.measureTimeAndLog("HomeViewModel creating state") {
+                        when (result) {
+                            is Result.Success -> {
+                                com.museum.utils.LOG("HomeViewModel.loadSites() - Creating Success state with ${result.data.size} sites")
+                                if (result.data.isEmpty()) {
+                                    HomeUiState.Empty
+                                } else {
+                                    val groupedSites = groupSitesByCountry(result.data)
+                                    HomeUiState.Success(
+                                        sites = result.data,
+                                        groupedSites = groupedSites
+                                    )
+                                }
+                            }
+                            is Result.Error -> {
+                                com.museum.utils.LOG("HomeViewModel.loadSites() - Creating Error state: ${result.exception.message}")
+                                HomeUiState.Error(result.exception.message ?: "Unknown error")
                             }
                         }
-                        is Result.Error -> {
-                            com.museum.utils.LOG("HomeViewModel.loadSites() - Creating Error state: ${result.exception.message}")
-                            _uiState.value = HomeUiState.Error(result.exception.message ?: "Unknown error")
-                        }
+                    }
+                    com.museum.utils.LOG("HomeViewModel.loadSites() - Setting _uiState.value to ${newState::class.simpleName}")
+                    com.museum.utils.measureTimeAndLog("HomeViewModel setting uiState") {
+                        _uiState.value = newState
                     }
                     com.museum.utils.LOG("HomeViewModel.loadSites() - _uiState.value SET COMPLETE")
                 }

@@ -23,7 +23,11 @@ class MuseumRepository(private val dataSource: HeritageSiteLocalDataSource) : IM
         return dataSource.getAllSites()
             .map<List<com.museum.data.Museum_item>, Result<List<HeritageSite>>> {
                 com.museum.utils.LOG("MuseumRepository.getAllSites() - Mapping ${it.size} items")
-                Result.Success(it.toHeritageSites())
+                com.museum.utils.checkMainThread()
+                val result = com.museum.utils.measureTimeAndLog("getAllSites mapping ${it.size} items") {
+                    it.toHeritageSites()
+                }
+                Result.Success(result)
             }
             .catch {
                 com.museum.utils.LOG("MuseumRepository.getAllSites() - ERROR: ${it.message}")
@@ -36,17 +40,21 @@ class MuseumRepository(private val dataSource: HeritageSiteLocalDataSource) : IM
         return dataSource.getSiteById(id)
             .onEach { items ->
                 com.museum.utils.LOG("MuseumRepository.getSiteById() - DataSource EMITTED ${items?.size ?: 0} items")
+                com.museum.utils.checkMainThread()
             }
             .map<List<com.museum.data.Museum_item>?, Result<HeritageSite?>> { it ->
-                val firstItem = it?.firstOrNull()
-                if (firstItem == null) {
-                    com.museum.utils.LOG("MuseumRepository.getSiteById() - Site NOT FOUND for id=$id")
-                    Result.Error(Exception("Site not found"))
+                val result = com.museum.utils.measureTimeAndLog("getSiteById($id) mapping") {
+                    val firstItem = it?.firstOrNull()
+                    if (firstItem == null) {
+                        com.museum.utils.LOG("MuseumRepository.getSiteById() - Site NOT FOUND for id=$id")
+                        Result.Error(Exception("Site not found"))
+                    }
+                    else {
+                        com.museum.utils.LOG("MuseumRepository.getSiteById() - Site FOUND: ${firstItem.name}")
+                        Result.Success(firstItem.toHeritageSite())
+                    }
                 }
-                else {
-                    com.museum.utils.LOG("MuseumRepository.getSiteById() - Site FOUND: ${firstItem.name}")
-                    Result.Success(firstItem.toHeritageSite())
-                }
+                result
             }
             .catch {
                 com.museum.utils.LOG("MuseumRepository.getSiteById() - ERROR: ${it.message}")

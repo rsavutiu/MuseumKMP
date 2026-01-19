@@ -36,23 +36,28 @@ class DetailViewModel(
                 }
                 .collect { result ->
                     com.museum.utils.LOG("DetailViewModel.loadSite() - collect() CALLED, result type=${result::class.simpleName}")
-                    val newState = when (result) {
-                        is Result.Success -> {
-                            val site = result.data
-                            com.museum.utils.LOG("DetailViewModel.loadSite() - Found site: ${site?.name ?: "NOT FOUND"}")
-                            if (site != null) {
-                                DetailUiState.Success(site)
-                            } else {
-                                DetailUiState.Error("Site not found")
+                    com.museum.utils.checkMainThread()
+                    val newState = com.museum.utils.measureTimeAndLog("DetailViewModel creating state") {
+                        when (result) {
+                            is Result.Success -> {
+                                val site = result.data
+                                com.museum.utils.LOG("DetailViewModel.loadSite() - Found site: ${site?.name ?: "NOT FOUND"}")
+                                if (site != null) {
+                                    DetailUiState.Success(site)
+                                } else {
+                                    DetailUiState.Error("Site not found")
+                                }
                             }
-                        }
-                        is Result.Error -> {
-                            com.museum.utils.LOG("DetailViewModel.loadSite() - Error: ${result.exception.message}")
-                            DetailUiState.Error(result.exception.message ?: "Unknown error")
+                            is Result.Error -> {
+                                com.museum.utils.LOG("DetailViewModel.loadSite() - Error: ${result.exception.message}")
+                                DetailUiState.Error(result.exception.message ?: "Unknown error")
+                            }
                         }
                     }
                     com.museum.utils.LOG("DetailViewModel.loadSite() - Setting _uiState.value to ${newState::class.simpleName}")
-                    _uiState.value = newState
+                    com.museum.utils.measureTimeAndLog("DetailViewModel setting uiState") {
+                        _uiState.value = newState
+                    }
                     com.museum.utils.LOG("DetailViewModel.loadSite() - _uiState.value SET COMPLETE")
                 }
         }
