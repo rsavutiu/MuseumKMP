@@ -1,6 +1,7 @@
 ﻿package com.museum.presentation.screens.home
 
 import androidx.lifecycle.ViewModel
+import com.museum.data.models.CountrySiteGroup
 import com.museum.data.models.HeritageSite
 import com.museum.domain.model.Result
 import com.museum.domain.usecases.GetSitesUseCase
@@ -43,7 +44,10 @@ class HomeViewModel(
                             if (result.data.isEmpty()) {
                                 HomeUiState.Empty
                             } else {
-                                HomeUiState.Success(result.data)
+                                HomeUiState.Success(
+                                    sites = result.data,
+                                    groupedSites = groupSitesByCountry(result.data)
+                                )
                             }
                         }
                         is Result.Error -> {
@@ -67,12 +71,35 @@ class HomeViewModel(
     fun setViewMode(mode: ViewMode) {
         _viewMode.value = mode
     }
+
+    private fun groupSitesByCountry(sites: List<HeritageSite>): List<CountrySiteGroup> {
+        // Flatten sites: duplicate sites with multiple countries
+        val flattenedSites = sites.flatMap { site ->
+            site.countries.map { country -> country to site }
+        }
+
+        // Group by country
+        val grouped = flattenedSites.groupBy { it.first }
+
+        // Sort countries alphabetically and sites within each country
+        return grouped.entries
+            .sortedBy { it.key }
+            .map { (country, pairs) ->
+                CountrySiteGroup(
+                    country = country,
+                    sites = pairs.map { it.second }.sortedBy { it.name }
+                )
+            }
+    }
 }
 
 sealed class HomeUiState {
     object Loading : HomeUiState()
     object Empty : HomeUiState()
-    data class Success(val sites: List<HeritageSite>) : HomeUiState()
+    data class Success(
+        val sites: List<HeritageSite>,
+        val groupedSites: List<CountrySiteGroup>
+    ) : HomeUiState()
     data class Error(val message: String) : HomeUiState()
 }
 

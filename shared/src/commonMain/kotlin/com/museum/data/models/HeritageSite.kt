@@ -54,6 +54,9 @@ data class HeritageSite(
     val latitude: Double? = null,
     val longitude: Double? = null
 ) {
+    val countries: List<String>
+        get() = author?.split(",")?.map { it.trim() } ?: emptyList()
+
     fun getLocalizedName(): String {
         val language = SupportedLanguage.fromCode(LocalizationManager.getCurrentLanguageCode())
         return when (language) {

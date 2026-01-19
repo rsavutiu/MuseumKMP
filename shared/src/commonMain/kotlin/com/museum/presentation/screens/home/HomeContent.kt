@@ -23,6 +23,7 @@ import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.unit.dp
 import coil3.SingletonImageLoader
 import coil3.compose.LocalPlatformContext
+import com.museum.data.models.CountrySiteGroup
 import com.museum.data.models.HeritageSite
 import com.museum.presentation.components.EmptyState
 import com.museum.presentation.components.LoadingIndicator
@@ -58,6 +59,7 @@ fun HomeContent(
                 if (viewMode == ViewMode.Grid) {
                     GridViewWithPreloading(
                         sites = uiState.sites,
+                        groupedSites = uiState.groupedSites,
                         onSiteClick = onSiteClick,
                         onFavoriteClick = onFavoriteClick,
                         modifier = Modifier.fillMaxSize().alpha(if (viewMode == ViewMode.Grid) 1f else 0f)
@@ -71,6 +73,7 @@ fun HomeContent(
 @Composable
 private fun GridViewWithPreloading(
     sites: List<HeritageSite>,
+    groupedSites: List<CountrySiteGroup>,
     onSiteClick: (Long) -> Unit,
     onFavoriteClick: (HeritageSite) -> Unit,
     modifier: Modifier = Modifier
@@ -81,6 +84,7 @@ private fun GridViewWithPreloading(
     val gridState = rememberLazyGridState()
     var initialPreloadComplete by remember { mutableStateOf(false) }
 
+    // Use the original sites list for preloading (no duplicates)
     LaunchedEffect(sites) {
         imagePreloader.preloadImages(
             sites = sites,
@@ -118,22 +122,37 @@ private fun GridViewWithPreloading(
             horizontalArrangement = Arrangement.spacedBy(12.dp),
             verticalArrangement = Arrangement.spacedBy(12.dp)
         ) {
+            val totalEntries = groupedSites.sumOf { it.sites.size }
             item(span = { GridItemSpan(maxLineSpan) }) {
                 Text(
-                    text = "${sites.size} World Heritage Sites",
+                    text = "$totalEntries Heritage Sites (${sites.size} unique sites in ${groupedSites.size} countries)",
                     style = MaterialTheme.typography.titleMedium,
                     modifier = Modifier.padding(bottom = 8.dp)
                 )
             }
-            items(items = sites, key = { "${it.id}_${it.name}" }) { site ->
-                val onFavorite = remember(site) {
-                    { onFavoriteClick(site) }
+
+            groupedSites.forEach { group ->
+                // Country header
+                item(span = { GridItemSpan(maxLineSpan) }) {
+                    Text(
+                        text = "${group.country} (${group.sites.size})",
+                        style = MaterialTheme.typography.headlineSmall,
+                        color = MaterialTheme.colorScheme.primary,
+                        modifier = Modifier.padding(top = 16.dp, bottom = 8.dp)
+                    )
                 }
-                SiteCard(
-                    site = site,
-                    onClick = { onSiteClick(site.id) },
-                    onFavoriteClick = onFavorite
-                )
+
+                // Sites for this country
+                items(items = group.sites, key = { "${it.id}_${it.name}_${group.country}" }) { site ->
+                    val onFavorite = remember(site) {
+                        { onFavoriteClick(site) }
+                    }
+                    SiteCard(
+                        site = site,
+                        onClick = { onSiteClick(site.id) },
+                        onFavoriteClick = onFavorite
+                    )
+                }
             }
         }
     }
