@@ -38,7 +38,7 @@ class CompleteDatabaseFixer:
     """Fixes all database issues in one pass"""
 
     # Languages to process
-    LANGUAGES = ['fr', 'es', 'de', 'it', 'pt', 'ru', 'ar', 'zh', 'ja', 'ro', 'hi', 'hu', 'pl', 'tr', 'nl']
+    LANGUAGES = ['fr', 'es', 'de', 'it', 'pt', 'ru', 'ar', 'zh', 'ja', 'ro', 'tr', 'pl', 'hu', 'hi']
 
     def __init__(self, db_path: str, test_one: bool = False):
         self.db_path = Path(db_path)
