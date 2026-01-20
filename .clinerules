@@ -38,7 +38,7 @@
 - DetailScreen provides zoomable image with wallpaper setting FAB
 
 ## Common Mistakes to Avoid
-- ✅ If you need to use worktrees, always commit to the real repo at the end of your prompt.
+- ❌ NEVER create branches or use git worktrees - work directly on the current branch
 - ❌ Never use `androidx.compose.ui.platform.LocalContext` in commonMain
 - ❌ Never use Android-specific APIs directly in commonMain
 - ❌ Never use `context.resources` or `context.packageName` in commonMain
