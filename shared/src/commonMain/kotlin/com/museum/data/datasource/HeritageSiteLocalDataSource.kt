@@ -64,7 +64,7 @@ class HeritageSiteLocalDataSource(
             SupportedLanguage.CHINESE -> heritageQueries.searchByNameZh(query, query, query, query)
             SupportedLanguage.JAPANESE -> heritageQueries.searchByNameJa(query, query, query, query)
             SupportedLanguage.ENGLISH -> heritageQueries.searchByName(query, query, query, query)
-            SupportedLanguage.DUTCH -> heritageQueries.searchByNameNl(query, query, query, query)
+            SupportedLanguage.HINDI -> heritageQueries.searchByNameHi(query, query, query, query)
             SupportedLanguage.HUNGARIAN -> heritageQueries.searchByNameHu(query, query, query, query)
             SupportedLanguage.TURKISH -> heritageQueries.searchByNameTr(query, query, query, query)
             SupportedLanguage.POLISH -> heritageQueries.searchByNamePl(query, query, query, query)

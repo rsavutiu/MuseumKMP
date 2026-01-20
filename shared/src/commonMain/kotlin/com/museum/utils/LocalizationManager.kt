@@ -16,7 +16,7 @@ enum class SupportedLanguage(val code: String) {
     ARABIC("ar"),
     CHINESE("zh"),
 
-    DUTCH("nl"),
+    HINDI("hi"),
     HUNGARIAN("hu"),
     TURKISH("tr"),
     POLISH("pl"),

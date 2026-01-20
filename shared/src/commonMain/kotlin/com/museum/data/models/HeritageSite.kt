@@ -24,6 +24,10 @@ data class HeritageSite(
     val nameAr: String? = null,
     val nameZh: String? = null,
     val nameJa: String? = null,
+    val nameHu: String? = null,
+    val nameHi: String? = null,
+    val nameTr: String? = null,
+    val namePl: String? = null,
     // Localized descriptions
     val descriptionRo: String? = null,
     val descriptionIt: String? = null,
@@ -35,6 +39,11 @@ data class HeritageSite(
     val descriptionAr: String? = null,
     val descriptionZh: String? = null,
     val descriptionJa: String? = null,
+    val descriptionNl: String? = null,
+    val descriptionHu: String? = null,
+    val descriptionHi: String? = null,
+    val descriptionPl: String? = null,
+    val descriptionTr: String? = null,
     // Localized styles
     val styleRo: String? = null,
     val styleIt: String? = null,
@@ -46,6 +55,10 @@ data class HeritageSite(
     val styleAr: String? = null,
     val styleZh: String? = null,
     val styleJa: String? = null,
+    val styleTr: String? = null,
+    val styleHi: String? = null,
+    val styleHu: String? = null,
+    val stylePl: String? = null,
     // Colors and location
     val primaryColor: Int? = null,
     val secondaryColor: Int? = null,
@@ -70,6 +83,10 @@ data class HeritageSite(
             SupportedLanguage.ARABIC -> nameAr
             SupportedLanguage.CHINESE -> nameZh
             SupportedLanguage.JAPANESE -> nameJa
+            SupportedLanguage.TURKISH -> nameTr
+            SupportedLanguage.HINDI -> nameHi
+            SupportedLanguage.HUNGARIAN -> nameHu
+            SupportedLanguage.POLISH -> namePl
             SupportedLanguage.ENGLISH -> null
         } ?: name
     }
@@ -87,7 +104,11 @@ data class HeritageSite(
             SupportedLanguage.ARABIC -> descriptionAr
             SupportedLanguage.CHINESE -> descriptionZh
             SupportedLanguage.JAPANESE -> descriptionJa
-            SupportedLanguage.ENGLISH -> null
+            SupportedLanguage.HINDI -> descriptionHi
+            SupportedLanguage.HUNGARIAN -> descriptionHu
+            SupportedLanguage.POLISH -> descriptionPl
+            SupportedLanguage.TURKISH -> descriptionTr
+            SupportedLanguage.ENGLISH -> description
         } ?: description
     }
 
@@ -104,6 +125,10 @@ data class HeritageSite(
             SupportedLanguage.ARABIC -> styleAr
             SupportedLanguage.CHINESE -> styleZh
             SupportedLanguage.JAPANESE -> styleJa
+            SupportedLanguage.POLISH -> stylePl
+            SupportedLanguage.HINDI -> styleHi
+            SupportedLanguage.HUNGARIAN -> styleHu
+            SupportedLanguage.TURKISH -> styleTr
             SupportedLanguage.ENGLISH -> null
         } ?: style
     }

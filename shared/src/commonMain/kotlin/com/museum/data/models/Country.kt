@@ -14,7 +14,11 @@ data class Country(
     val nameRu: String? = null,
     val nameAr: String? = null,
     val nameZh: String? = null,
-    val nameJa: String? = null
+    val nameJa: String? = null,
+    val nameTr: String? = null,
+    val namePl: String? = null,
+    val nameHu: String? = null,
+    val nameHi: String? = null
 ) {
     fun getLocalizedName(): String {
         val language = SupportedLanguage.fromCode(LocalizationManager.getCurrentLanguageCode())
@@ -29,7 +33,11 @@ data class Country(
             SupportedLanguage.ARABIC -> nameAr
             SupportedLanguage.CHINESE -> nameZh
             SupportedLanguage.JAPANESE -> nameJa
-            SupportedLanguage.ENGLISH -> null
+            SupportedLanguage.ENGLISH -> name
+            SupportedLanguage.HINDI -> nameHi
+            SupportedLanguage.HUNGARIAN -> nameHu
+            SupportedLanguage.TURKISH -> nameTr
+            SupportedLanguage.POLISH -> namePl
         } ?: name
     }
 }
