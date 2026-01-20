@@ -40,45 +40,18 @@
     paintingname_ar TEXT,
     description_ar TEXT,
     style_ar TEXT,
-    paintingname_nl TEXT,
-    description_nl TEXT,
-    style_nl TEXT,
-    paintingname_sv TEXT,
-    description_sv TEXT,
-    style_sv TEXT,
-    paintingname_no TEXT,
-    description_no TEXT,
-    style_no TEXT,
-    paintingname_da TEXT,
-    description_da TEXT,
-    style_da TEXT,
-    paintingname_is TEXT,
-    description_is TEXT,
-    style_is TEXT,
-    paintingname_fi TEXT,
-    description_fi TEXT,
-    style_fi TEXT,
-    paintingname_lt TEXT,
-    description_lt TEXT,
-    style_lt TEXT,
-    paintingname_lv TEXT,
-    description_lv TEXT,
-    style_lv TEXT,
-    paintingname_et TEXT,
-    description_et TEXT,
-    style_et TEXT,
-    paintingname_hi TEXT,
-    description_hi TEXT,
-    style_hi TEXT,
+    paintingname_tr TEXT,
+    description_tr TEXT,
+    style_tr TEXT,
     paintingname_pl TEXT,
     description_pl TEXT,
     style_pl TEXT,
-    paintingname_uk TEXT,
-    description_uk TEXT,
-    style_uk TEXT,
-    paintingname_fa TEXT,
-    description_fa TEXT,
-    style_fa TEXT,
+    paintingname_hu TEXT,
+    description_hu TEXT,
+    style_hu TEXT,
+    paintingname_hi TEXT,
+    description_hi TEXT,
+    style_hi TEXT,
     isFavourite TEXT DEFAULT "false",
     viewed TEXT DEFAULT "false",
     visited TEXT DEFAULT "false"
@@ -192,6 +165,42 @@ LEFT JOIN authors ON museum_item.author = authors.name
 WHERE COALESCE(museum_item.paintingname_ja, museum_item.paintingname) LIKE '%' || ? || '%'
    OR COALESCE(authors.name_ja, authors.name) LIKE '%' || ? || '%'
    OR COALESCE(museum_item.description_ja, museum_item.description) LIKE '%' || ? || '%'
+   OR museum_item.location LIKE '%' || ? || '%';
+
+-- Locale-aware search for Turkish
+searchByNameTr:
+SELECT museum_item.* FROM museum_item
+LEFT JOIN authors ON museum_item.author = authors.name
+WHERE COALESCE(museum_item.paintingname_tr, museum_item.paintingname) LIKE '%' || ? || '%'
+   OR COALESCE(authors.name_tr, authors.name) LIKE '%' || ? || '%'
+   OR COALESCE(museum_item.description_tr, museum_item.description) LIKE '%' || ? || '%'
+   OR museum_item.location LIKE '%' || ? || '%';
+
+-- Locale-aware search for Polish
+searchByNamePl:
+SELECT museum_item.* FROM museum_item
+LEFT JOIN authors ON museum_item.author = authors.name
+WHERE COALESCE(museum_item.paintingname_pl, museum_item.paintingname) LIKE '%' || ? || '%'
+   OR COALESCE(authors.name_pl, authors.name) LIKE '%' || ? || '%'
+   OR COALESCE(museum_item.description_pl, museum_item.description) LIKE '%' || ? || '%'
+   OR museum_item.location LIKE '%' || ? || '%';
+
+-- Locale-aware search for Hungarian
+searchByNameHu:
+SELECT museum_item.* FROM museum_item
+LEFT JOIN authors ON museum_item.author = authors.name
+WHERE COALESCE(museum_item.paintingname_hu, museum_item.paintingname) LIKE '%' || ? || '%'
+   OR COALESCE(authors.name_hu, authors.name) LIKE '%' || ? || '%'
+   OR COALESCE(museum_item.description_hu, museum_item.description) LIKE '%' || ? || '%'
+   OR museum_item.location LIKE '%' || ? || '%';
+
+-- Locale-aware search for Hindi
+searchByNameHi:
+SELECT museum_item.* FROM museum_item
+LEFT JOIN authors ON museum_item.author = authors.name
+WHERE COALESCE(museum_item.paintingname_hi, museum_item.paintingname) LIKE '%' || ? || '%'
+   OR COALESCE(authors.name_hi, authors.name) LIKE '%' || ? || '%'
+   OR COALESCE(museum_item.description_hi, museum_item.description) LIKE '%' || ? || '%'
    OR museum_item.location LIKE '%' || ? || '%';
 
 searchByLocation:

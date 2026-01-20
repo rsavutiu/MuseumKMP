@@ -38,7 +38,7 @@ class CompleteDatabaseFixer:
     """Fixes all database issues in one pass"""
 
     # Languages to process
-    LANGUAGES = ['fr', 'es', 'de', 'it', 'pt', 'ru', 'ar', 'zh', 'ja', 'ro']
+    LANGUAGES = ['fr', 'es', 'de', 'it', 'pt', 'ru', 'ar', 'zh', 'ja', 'ro', 'hi', 'hu', 'pl', 'tr', 'nl']
 
     def __init__(self, db_path: str, test_one: bool = False):
         self.db_path = Path(db_path)
@@ -94,7 +94,11 @@ class CompleteDatabaseFixer:
                 'de': 'de',
                 'es': 'es',
                 'fr': 'fr',
-                'ro': 'ro'
+                'ro': 'ro',
+                'tr': 'tr',
+                'hu': 'hu',
+                'nl': 'nl',
+                'hi': 'hi'
             }
             api_lang = lang_map.get(target_lang, target_lang)
 
@@ -131,6 +135,9 @@ class CompleteDatabaseFixer:
                OR (description_ar IS NULL OR description_ar = '')
                OR (description_zh IS NULL OR description_zh = '')
                OR (description_ja IS NULL OR description_ja = '')
+               OR (description_hi IS NULL OR description_nl = '')
+               OR (description_pl IS NULL OR description_tr = '')
+               OR (description_hu IS NULL)
                OR (style_fr IS NULL OR style_fr = '')
                OR (location IS NULL OR location = '')
             ORDER BY id

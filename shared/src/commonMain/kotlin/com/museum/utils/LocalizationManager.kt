@@ -15,6 +15,12 @@ enum class SupportedLanguage(val code: String) {
     RUSSIAN("ru"),
     ARABIC("ar"),
     CHINESE("zh"),
+
+    DUTCH("nl"),
+    HUNGARIAN("hu"),
+    TURKISH("tr"),
+    POLISH("pl"),
+
     JAPANESE("ja");
 
     companion object {
