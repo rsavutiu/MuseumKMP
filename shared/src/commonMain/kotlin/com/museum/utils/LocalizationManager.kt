@@ -4,24 +4,25 @@ expect object LocalizationManager {
     fun getCurrentLanguageCode(): String
 }
 
-enum class SupportedLanguage(val code: String) {
-    ENGLISH("en"),
-    ROMANIAN("ro"),
-    ITALIAN("it"),
-    SPANISH("es"),
-    GERMAN("de"),
-    FRENCH("fr"),
-    PORTUGUESE("pt"),
-    RUSSIAN("ru"),
-    ARABIC("ar"),
-    CHINESE("zh"),
+enum class SupportedLanguage(val code: String, val displayName: String) {
+    ENGLISH("en", "English"),
+    ROMANIAN("ro", "Română"),
+    ITALIAN("it", "Italiano"),
+    SPANISH("es", "Español"),
+    GERMAN("de", "Deutsch"),
+    FRENCH("fr", "Français"),
+    PORTUGUESE("pt", "Português"),
+    RUSSIAN("ru", "Русский"),
+    ARABIC("ar", "العربية"),
+    CHINESE("zh", "中文"),
+    JAPANESE("ja", "日本語"),
 
-    HINDI("hi"),
-    HUNGARIAN("hu"),
-    TURKISH("tr"),
-    POLISH("pl"),
+    HINDI("hi", "आधुनिक मानक हिन्दी"),
+    HUNGARIAN("hu", "Magyar nyelv"),
+    TURKISH("tr", "Türkçe "),
+    POLISH("pl", "Język polski");
 
-    JAPANESE("ja");
+    fun getDisplayName(): String = displayName
 
     companion object {
         fun fromCode(code: String): SupportedLanguage {

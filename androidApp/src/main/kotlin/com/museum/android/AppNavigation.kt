@@ -12,6 +12,8 @@ import com.museum.presentation.screens.detail.DetailScreen
 import com.museum.presentation.screens.detail.DetailViewModel
 import com.museum.presentation.screens.home.HomeScreen
 import com.museum.presentation.screens.home.HomeViewModel
+import com.museum.presentation.screens.language.LanguageSelectionScreen
+import com.museum.presentation.screens.language.LanguageSelectionViewModel
 import com.museum.presentation.screens.site.SiteDetailScreen
 import com.museum.presentation.screens.site.SiteDetailViewModel
 import com.museum.utils.LOG
@@ -32,7 +34,8 @@ fun AppNavigation() {
                 LOG("HomeViewModel: $viewModel")
                 HomeScreen(
                     viewModel = viewModel,
-                    onSiteClick = { siteId -> navController.navigate("site/$siteId") }
+                    onSiteClick = { siteId -> navController.navigate("site/$siteId") },
+                    onNavigateToLanguage = { navController.navigate("language") }
                 )
             }
 
@@ -66,6 +69,14 @@ fun AppNavigation() {
                         LOG("AppNavigation - detail onNavigateBack CALLED")
                         navController.popBackStack()
                     }
+                )
+            }
+
+            composable("language") {
+                val viewModel: LanguageSelectionViewModel = koinViewModel()
+                LanguageSelectionScreen(
+                    viewModel = viewModel,
+                    onNavigateBack = { navController.popBackStack() }
                 )
             }
         }

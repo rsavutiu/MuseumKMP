@@ -23,6 +23,7 @@ import kotlinx.coroutines.launch
 fun HomeScreen(
     viewModel: HomeViewModel,
     onSiteClick: (Long) -> Unit,
+    onNavigateToLanguage: () -> Unit,
     modifier: Modifier = Modifier
 ) {
     val uiState by viewModel.uiState.collectAsState()
@@ -39,6 +40,7 @@ fun HomeScreen(
             HomeDrawerContent(
                 viewMode = viewMode,
                 onViewModeChange = viewModel::setViewMode,
+                onLanguageClick = onNavigateToLanguage,
                 onCloseDrawer = { scope.launch { drawerState.close() } }
             )
         }

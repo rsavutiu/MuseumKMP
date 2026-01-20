@@ -9,6 +9,7 @@ import com.museum.domain.model.Result
 import com.museum.domain.usecases.GetSitesUseCase
 import com.museum.domain.usecases.SearchSiteUseCase
 import com.museum.domain.usecases.ToggleFavoriteUseCase
+import com.museum.utils.LanguagePreferences
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.*
@@ -40,10 +41,11 @@ class HomeViewModel(
         com.museum.utils.LOG("HomeViewModel.loadSites() - STARTED")
         coroutineScope.launch {
             com.museum.utils.LOG("HomeViewModel.loadSites() - Coroutine LAUNCHED")
-            searchQuery
-                .onEach { query ->
-                    com.museum.utils.LOG("HomeViewModel.loadSites() - searchQuery EMITTED: '$query'")
-                }
+            combine(searchQuery, LanguagePreferences.selectedLanguage) { query, _ ->
+                query
+            }.onEach { query ->
+                com.museum.utils.LOG("HomeViewModel.loadSites() - searchQuery EMITTED: '$query'")
+            }
                 .flatMapLatest { query ->
                     com.museum.utils.LOG("HomeViewModel.loadSites() - flatMapLatest TRIGGERED for query='$query'")
                     val flow = if (query.isBlank()) getSitesUseCase() else searchSiteUseCase(query)
@@ -54,26 +56,22 @@ class HomeViewModel(
                     com.museum.utils.LOG("HomeViewModel.loadSites() - Flow EMITTED result: ${result::class.simpleName}, dataSize=${if (result is Result.Success) result.data.size else "N/A"}")
                 }
                 .collect { result ->
-                    com.museum.utils.LOG("HomeViewModel.loadSites() - collect() CALLED, result type=${result::class.simpleName}")
-                    com.museum.utils.checkMainThread()
-                    val newState = com.museum.utils.measureTimeAndLog("HomeViewModel creating state") {
-                        when (result) {
-                            is Result.Success -> {
-                                com.museum.utils.LOG("HomeViewModel.loadSites() - Creating Success state with ${result.data.size} sites")
-                                if (result.data.isEmpty()) {
-                                    HomeUiState.Empty
-                                } else {
-                                    val groupedSites = groupSitesByCountry(result.data)
-                                    HomeUiState.Success(
-                                        sites = result.data,
-                                        groupedSites = groupedSites
-                                    )
-                                }
+                    _uiState.value = when (result) {
+                        is Result.Success -> {
+                            com.museum.utils.LOG("HomeViewModel.loadSites() - Creating Success state with ${result.data.size} sites")
+                            if (result.data.isEmpty()) {
+                                HomeUiState.Empty
+                            } else {
+                                val groupedSites = groupSitesByCountry(result.data)
+                                HomeUiState.Success(
+                                    sites = result.data,
+                                    groupedSites = groupedSites
+                                )
                             }
-                            is Result.Error -> {
-                                com.museum.utils.LOG("HomeViewModel.loadSites() - Creating Error state: ${result.exception.message}")
-                                HomeUiState.Error(result.exception.message ?: "Unknown error")
-                            }
+                        }
+                        is Result.Error -> {
+                            com.museum.utils.LOG("HomeViewModel.loadSites() - Creating Error state: ${result.exception.message}")
+                            HomeUiState.Error(result.exception.message ?: "Unknown error")
                         }
                     }
                     com.museum.utils.LOG("HomeViewModel.loadSites() - Setting _uiState.value to ${newState::class.simpleName}")

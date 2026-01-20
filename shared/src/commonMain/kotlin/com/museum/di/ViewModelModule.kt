@@ -2,6 +2,7 @@ package com.museum.di
 
 import com.museum.presentation.screens.detail.DetailViewModel
 import com.museum.presentation.screens.home.HomeViewModel
+import com.museum.presentation.screens.language.LanguageSelectionViewModel
 import com.museum.presentation.screens.site.SiteDetailViewModel
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -51,5 +52,10 @@ val viewModelModule = module {
             wallpaperService = get(),
             coroutineScope = get()
         )
+    }
+
+    // LanguageSelectionViewModel - Factory
+    factory {
+        LanguageSelectionViewModel()
     }
 }

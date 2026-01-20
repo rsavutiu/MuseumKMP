@@ -10,6 +10,7 @@ import androidx.compose.ui.unit.dp
 import museumkmp.shared.generated.resources.Res
 import museumkmp.shared.generated.resources.map
 import museumkmp.shared.generated.resources.grid_view
+import museumkmp.shared.generated.resources.language
 import org.jetbrains.compose.resources.ExperimentalResourceApi
 import org.jetbrains.compose.resources.painterResource
 
@@ -18,6 +19,7 @@ import org.jetbrains.compose.resources.painterResource
 fun HomeDrawerContent(
     viewMode: ViewMode,
     onViewModeChange: (ViewMode) -> Unit,
+    onLanguageClick: () -> Unit,
     onCloseDrawer: () -> Unit
 ) {
     ModalDrawerSheet {
@@ -47,6 +49,17 @@ fun HomeDrawerContent(
             selected = viewMode == ViewMode.Map,
             onClick = {
                 onViewModeChange(ViewMode.Map)
+                onCloseDrawer()
+            },
+            modifier = Modifier.padding(horizontal = 12.dp, vertical = 4.dp)
+        )
+        HorizontalDivider(modifier = Modifier.padding(horizontal = 16.dp))
+        NavigationDrawerItem(
+            label = { Text("Language") },
+            icon = { Icon(painterResource(resource = Res.drawable.language), contentDescription = "Language") },
+            selected = false,
+            onClick = {
+                onLanguageClick()
                 onCloseDrawer()
             },
             modifier = Modifier.padding(horizontal = 12.dp, vertical = 4.dp)

@@ -1,6 +1,6 @@
 ﻿package com.museum.data.models
 
-import com.museum.utils.LocalizationManager
+import com.museum.utils.LanguagePreferences
 import com.museum.utils.SupportedLanguage
 
 data class HeritageSite(
@@ -71,7 +71,7 @@ data class HeritageSite(
         get() = author?.split(",")?.map { it.trim() } ?: emptyList()
 
     fun getLocalizedName(): String {
-        val language = SupportedLanguage.fromCode(LocalizationManager.getCurrentLanguageCode())
+        val language = SupportedLanguage.fromCode(LanguagePreferences.getEffectiveLanguage())
         return when (language) {
             SupportedLanguage.ROMANIAN -> nameRo
             SupportedLanguage.ITALIAN -> nameIt
@@ -92,7 +92,7 @@ data class HeritageSite(
     }
 
     fun getLocalizedDescription(): String? {
-        val language = SupportedLanguage.fromCode(LocalizationManager.getCurrentLanguageCode())
+        val language = SupportedLanguage.fromCode(LanguagePreferences.getEffectiveLanguage())
         return when (language) {
             SupportedLanguage.ROMANIAN -> descriptionRo
             SupportedLanguage.ITALIAN -> descriptionIt
@@ -113,7 +113,7 @@ data class HeritageSite(
     }
 
     fun getLocalizedStyle(): String? {
-        val language = SupportedLanguage.fromCode(LocalizationManager.getCurrentLanguageCode())
+        val language = SupportedLanguage.fromCode(LanguagePreferences.getEffectiveLanguage())
         return when (language) {
             SupportedLanguage.ROMANIAN -> styleRo
             SupportedLanguage.ITALIAN -> styleIt

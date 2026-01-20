@@ -14,7 +14,8 @@
       "Bash(sqlite3:*)",
       "Bash(python validate_heritage_database.py:*)",
       "Bash(curl:*)",
-      "Bash(python:*)"
+      "Bash(python:*)",
+      "Bash(git commit:*)"
     ]
   }
 }
