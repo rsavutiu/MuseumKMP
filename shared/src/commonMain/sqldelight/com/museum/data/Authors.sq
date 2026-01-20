@@ -41,22 +41,10 @@ CREATE TABLE IF NOT EXISTS authors (
     link_el TEXT,
     description_tr TEXT,
     link_tr TEXT,
-    description_da TEXT,
-    link_da TEXT,
-    description_is TEXT,
-    link_is TEXT,
-    description_lt TEXT,
-    link_lt TEXT,
-    description_lv TEXT,
-    link_lv TEXT,
-    description_et TEXT,
-    link_et TEXT,
     description_pl TEXT,
     link_pl TEXT,
-    description_uk TEXT,
-    link_uk TEXT,
-    description_fa TEXT,
-    link_fa TEXT,
+    description_hu TEXT,
+    link_hu TEXT,
     name_ru TEXT,
     name_zh TEXT,
     name_ja TEXT,
@@ -67,19 +55,10 @@ CREATE TABLE IF NOT EXISTS authors (
     name_ro TEXT,
     name_ar TEXT,
     name_it TEXT,
-    name_nl TEXT,
-    name_sv TEXT,
-    name_no TEXT,
-    name_da TEXT,
-    name_is TEXT,
-    name_fi TEXT,
-    name_lt TEXT,
-    name_lv TEXT,
-    name_et TEXT,
-    name_hi TEXT,
+    name_tr TEXT,
     name_pl TEXT,
-    name_uk TEXT,
-    name_fa TEXT
+    name_hu TEXT,
+    name_hi TEXT
 );
 
 selectAll:
@@ -87,8 +66,3 @@ SELECT * FROM authors;
 
 selectByName:
 SELECT * FROM authors WHERE name = ?;
-
-selectCountryTranslations:
-SELECT name, name_ro, name_it, name_es, name_de, name_fr, name_pt, name_ru, name_ar, name_zh, name_ja
-FROM authors
-WHERE name IN ?;
