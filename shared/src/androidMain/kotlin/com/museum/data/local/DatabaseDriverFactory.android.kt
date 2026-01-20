@@ -10,7 +10,8 @@ actual class DatabaseDriverFactory(private val context: Context) {
     actual fun createDriver(): SqlDriver {
         val dbFile = context.getDatabasePath("heritage_sites.db")
 
-        if (!dbFile.exists()) {
+        // Helper function to copy database from assets
+        fun copyDatabaseFromAssets() {
             dbFile.parentFile?.mkdirs()
             context.assets.open("heritage_sites.db").use { input ->
                 FileOutputStream(dbFile).use { output ->
@@ -19,9 +20,13 @@ actual class DatabaseDriverFactory(private val context: Context) {
             }
         }
 
-        // Create a schema wrapper with version 6
-        val schemaVersion6 = object : app.cash.sqldelight.db.SqlSchema<app.cash.sqldelight.db.QueryResult.Value<Unit>> {
-            override val version: Long = 6
+        if (!dbFile.exists()) {
+            copyDatabaseFromAssets()
+        }
+
+        // Create a schema wrapper that deletes and recreates on version mismatch
+        val schema = object : app.cash.sqldelight.db.SqlSchema<app.cash.sqldelight.db.QueryResult.Value<Unit>> {
+            override val version: Long = MuseumDatabase.Schema.version
 
             override fun create(driver: app.cash.sqldelight.db.SqlDriver): app.cash.sqldelight.db.QueryResult.Value<Unit> {
                 return MuseumDatabase.Schema.create(driver)
@@ -33,14 +38,21 @@ actual class DatabaseDriverFactory(private val context: Context) {
                 newVersion: Long,
                 vararg callbacks: app.cash.sqldelight.db.AfterVersion
             ): app.cash.sqldelight.db.QueryResult.Value<Unit> {
-                // Ensure all tables exist regardless of version
-                // This handles the case where the database exists but is missing tables
+                // Delete and recreate database on version mismatch
+                if (oldVersion != newVersion) {
+                    // Close the driver first
+                    driver.close()
+                    // Delete the database file
+                    dbFile.delete()
+                    // Copy fresh database from assets
+                    copyDatabaseFromAssets()
+                }
                 return MuseumDatabase.Schema.create(driver)
             }
         }
 
         return AndroidSqliteDriver(
-            schema = schemaVersion6,
+            schema = schema,
             context = context,
             name = "heritage_sites.db"
         )

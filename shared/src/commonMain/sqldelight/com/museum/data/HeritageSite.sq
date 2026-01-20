@@ -1,4 +1,6 @@
-﻿CREATE TABLE IF NOT EXISTS museum_item (
+﻿PRAGMA user_version = 1;
+
+CREATE TABLE IF NOT EXISTS museum_item (
     style_zh TEXT,
     style_ja TEXT,
     paintingname_ja TEXT,
