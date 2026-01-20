@@ -74,10 +74,6 @@ class HomeViewModel(
                             HomeUiState.Error(result.exception.message ?: "Unknown error")
                         }
                     }
-                    com.museum.utils.LOG("HomeViewModel.loadSites() - Setting _uiState.value to ${newState::class.simpleName}")
-                    com.museum.utils.measureTimeAndLog("HomeViewModel setting uiState") {
-                        _uiState.value = newState
-                    }
                     com.museum.utils.LOG("HomeViewModel.loadSites() - _uiState.value SET COMPLETE")
                 }
         }

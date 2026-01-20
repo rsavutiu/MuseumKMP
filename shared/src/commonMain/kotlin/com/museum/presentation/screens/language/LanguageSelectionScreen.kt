@@ -54,7 +54,7 @@ fun LanguageSelectionScreen(
             // All supported languages
             viewModel.getSupportedLanguages().forEach { language ->
                 LanguageItem(
-                    languageName = language.getDisplayName(),
+                    languageName = language.getTheLanguageDisplayName(),
                     languageCode = language.code,
                     isSelected = selectedLanguage == language,
                     onClick = { viewModel.setLanguage(language) }
