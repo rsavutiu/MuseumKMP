@@ -29,6 +29,10 @@ object HeritageSiteMapper {
             nameAr = paintingname_ar,
             nameZh = paintingname_zh,
             nameJa = paintingname_ja,
+            nameHu = paintingname_hu,
+            nameHi = paintingname_hi,
+            nameTr = paintingname_tr,
+            namePl = paintingname_pl,
             // Localized descriptions
             descriptionRo = description_ro,
             descriptionIt = description_it,
@@ -40,6 +44,10 @@ object HeritageSiteMapper {
             descriptionAr = description_ar,
             descriptionZh = description_zh,
             descriptionJa = description_ja,
+            descriptionHu = description_hu,
+            descriptionHi = description_hi,
+            descriptionPl = description_pl,
+            descriptionTr = description_tr,
             // Localized styles
             styleRo = style_ro,
             styleIt = style_it,
@@ -51,6 +59,10 @@ object HeritageSiteMapper {
             styleAr = style_ar,
             styleZh = style_zh,
             styleJa = style_ja,
+            styleTr = style_tr,
+            styleHi = style_hi,
+            styleHu = style_hu,
+            stylePl = style_pl,
             // Colors and location
             primaryColor = prim_color?.toInt(),
             secondaryColor = sec_color?.toInt(),

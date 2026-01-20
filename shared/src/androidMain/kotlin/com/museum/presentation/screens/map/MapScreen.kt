@@ -1,5 +1,6 @@
 package com.museum.presentation.screens.map
 
+import androidx.compose.animation.core.tween
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -12,6 +13,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
+import com.google.android.gms.maps.CameraUpdateFactory
 import com.google.android.gms.maps.model.CameraPosition
 import com.google.android.gms.maps.model.LatLng
 import com.google.maps.android.clustering.ClusterItem
@@ -24,16 +26,25 @@ import com.google.maps.android.compose.clustering.Clustering
 import com.google.maps.android.compose.clustering.rememberClusterManager
 import com.google.maps.android.compose.rememberCameraPositionState
 import com.museum.data.models.HeritageSite
+import kotlinx.coroutines.delay
 
 @OptIn(MapsComposeExperimentalApi::class)
 @Composable
 fun MapScreen(
     sites: List<HeritageSite>,
+    focusedSiteId: Long? = null,
     onSiteClick: (Long) -> Unit,
+    onClearFocusedSite: () -> Unit = {},
     modifier: Modifier = Modifier
 ) {
     val sitesWithCoordinates = remember(sites) {
         sites.filter { it.latitude != null && it.longitude != null }
+    }
+
+    val focusedSite = remember(focusedSiteId, sitesWithCoordinates) {
+        focusedSiteId?.let { id ->
+            sitesWithCoordinates.find { it.id == id }
+        }
     }
 
     if (sitesWithCoordinates.isEmpty()) {
@@ -95,6 +106,25 @@ fun MapScreen(
                 clusterManager?.let {
                     it.setOnClusterClickListener { false } // Return false for default zoom behavior
                     it.setOnClusterItemInfoWindowClickListener { item -> onSiteClick(item.site.id) }
+                }
+            }
+
+            // Animate to focused site when specified
+            LaunchedEffect(focusedSite) {
+                if (focusedSite != null && focusedSite.latitude != null && focusedSite.longitude != null) {
+                    // Wait for map and clusters to fully load
+                    delay(1000)
+
+                    // Animate slowly to the focused site
+                    val targetPosition = LatLng(focusedSite.latitude, focusedSite.longitude)
+                    cameraPositionState.animate(
+                        update = CameraUpdateFactory.newLatLngZoom(targetPosition, 12f),
+                        durationMs = 3000
+                    )
+
+                    // Clear the focused site after navigation
+                    delay(3500)
+                    onClearFocusedSite()
                 }
             }
         }

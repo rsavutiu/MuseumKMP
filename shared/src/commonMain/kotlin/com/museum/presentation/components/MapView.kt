@@ -10,6 +10,8 @@ import com.museum.data.models.HeritageSite
 @Composable
 expect fun MapView(
     sites: List<HeritageSite>,
+    focusedSiteId: Long? = null,
     onSiteClick: (Long) -> Unit,
+    onClearFocusedSite: () -> Unit = {},
     modifier: Modifier = Modifier
 )

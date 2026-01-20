@@ -1,7 +1,11 @@
 package com.museum.android
 
+import androidx.compose.material3.SnackbarDuration
+import androidx.compose.material3.SnackbarHostState
+import androidx.compose.material3.SnackbarResult
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.navigation.NavType
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
@@ -12,17 +16,21 @@ import com.museum.presentation.screens.detail.DetailScreen
 import com.museum.presentation.screens.detail.DetailViewModel
 import com.museum.presentation.screens.home.HomeScreen
 import com.museum.presentation.screens.home.HomeViewModel
+import com.museum.presentation.screens.home.ViewMode
 import com.museum.presentation.screens.language.LanguageSelectionScreen
 import com.museum.presentation.screens.language.LanguageSelectionViewModel
 import com.museum.presentation.screens.site.SiteDetailScreen
 import com.museum.presentation.screens.site.SiteDetailViewModel
 import com.museum.utils.LOG
+import kotlinx.coroutines.launch
 import org.koin.androidx.compose.koinViewModel
 import org.koin.core.parameter.parametersOf
 
 @Composable
 fun AppNavigation() {
     val navController = rememberNavController()
+    val snackbarHostState = remember { SnackbarHostState() }
+    val scope = rememberCoroutineScope()
 
     NavHost(navController = navController, startDestination = "main_graph") {
         navigation(startDestination = "home", route = "main_graph") {
@@ -35,7 +43,8 @@ fun AppNavigation() {
                 HomeScreen(
                     viewModel = viewModel,
                     onSiteClick = { siteId -> navController.navigate("site/$siteId") },
-                    onNavigateToLanguage = { navController.navigate("language") }
+                    onNavigateToLanguage = { navController.navigate("language") },
+                    snackbarHostState = snackbarHostState
                 )
             }
 
@@ -45,11 +54,22 @@ fun AppNavigation() {
             ) { backStackEntry ->
                 val siteId = backStackEntry.arguments?.getLong("siteId") ?: return@composable
                 val viewModel: SiteDetailViewModel = koinViewModel { parametersOf(siteId) }
+                val parentEntry = remember(navController.currentBackStackEntry) {
+                    navController.getBackStackEntry("main_graph")
+                }
+                val homeViewModel: HomeViewModel = koinViewModel(viewModelStoreOwner = parentEntry)
 
                 SiteDetailScreen(
                     viewModel = viewModel,
                     onBackClick = { navController.popBackStack() },
-                    onShowFullImage = { id -> navController.navigate("detail/$id") }
+                    onShowFullImage = { id -> navController.navigate("detail/$id") },
+                    onShowOnMap = { id ->
+                        homeViewModel.setViewMode(ViewMode.Map)
+                        homeViewModel.setFocusedSite(id)
+                        navController.navigate("home") {
+                            popUpTo("home") { inclusive = true }
+                        }
+                    }
                 )
             }
 
@@ -73,10 +93,26 @@ fun AppNavigation() {
             }
 
             composable("language") {
-                val viewModel: LanguageSelectionViewModel = koinViewModel()
+                val parentEntry = remember(navController.currentBackStackEntry) {
+                    navController.getBackStackEntry("main_graph")
+                }
+                val viewModel: LanguageSelectionViewModel = koinViewModel(viewModelStoreOwner = parentEntry)
                 LanguageSelectionScreen(
                     viewModel = viewModel,
-                    onNavigateBack = { navController.popBackStack() }
+                    onNavigateBack = { navController.popBackStack() },
+                    onLanguageChanged = { languageViewModel ->
+                        navController.popBackStack()
+                        scope.launch {
+                            val result = snackbarHostState.showSnackbar(
+                                message = "Language changed",
+                                actionLabel = "UNDO",
+                                duration = SnackbarDuration.Short
+                            )
+                            if (result == SnackbarResult.ActionPerformed) {
+                                languageViewModel.undoLanguageChange()
+                            }
+                        }
+                    }
                 )
             }
         }

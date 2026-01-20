@@ -15,7 +15,9 @@ import com.museum.data.models.HeritageSite
 @Composable
 actual fun MapView(
     sites: List<HeritageSite>,
+    focusedSiteId: Long?,
     onSiteClick: (Long) -> Unit,
+    onClearFocusedSite: () -> Unit,
     modifier: Modifier
 ) {
     Box(

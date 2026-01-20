@@ -40,8 +40,10 @@ fun HomeContent(
     uiState: HomeUiState,
     viewMode: ViewMode,
     searchQuery: String,
+    focusedSiteId: Long? = null,
     onSiteClick: (Long) -> Unit,
     onFavoriteClick: (HeritageSite) -> Unit,
+    onClearFocusedSite: () -> Unit = {},
     modifier: Modifier = Modifier
 ) {
     when (uiState) {
@@ -56,7 +58,9 @@ fun HomeContent(
                 ViewMode.Map -> {
                     MapView(
                         sites = uiState.sites,
+                        focusedSiteId = focusedSiteId,
                         onSiteClick = onSiteClick,
+                        onClearFocusedSite = onClearFocusedSite,
                         modifier = modifier.fillMaxSize()
                     )
                 }

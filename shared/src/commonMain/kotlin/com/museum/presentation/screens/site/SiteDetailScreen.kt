@@ -1,5 +1,6 @@
 ﻿package com.museum.presentation.screens.site
 
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -26,6 +27,7 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
+import androidx.compose.material3.SmallFloatingActionButton
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.TopAppBarDefaults
@@ -52,6 +54,7 @@ import com.museum.utils.getPrimaryColor
 import com.museum.utils.toDrawableResourceName
 import museumkmp.shared.generated.resources.Res
 import museumkmp.shared.generated.resources.fullscreen
+import museumkmp.shared.generated.resources.map
 import org.jetbrains.compose.resources.ExperimentalResourceApi
 import org.jetbrains.compose.resources.painterResource
 
@@ -60,7 +63,8 @@ import org.jetbrains.compose.resources.painterResource
 fun SiteDetailScreen(
     viewModel: SiteDetailViewModel,
     onBackClick: () -> Unit,
-    onShowFullImage: (Long) -> Unit
+    onShowFullImage: (Long) -> Unit,
+    onShowOnMap: (Long) -> Unit
 ) {
     val uiState by viewModel.uiState.collectAsState()
 
@@ -99,12 +103,32 @@ fun SiteDetailScreen(
             }
         },
         floatingActionButton = {
-            (uiState as? SiteDetailUiState.Success)?.site?.let {
-                FloatingActionButton(
-                    onClick = { onShowFullImage(it.id) },
-                    modifier = Modifier.padding(16.dp)
+            (uiState as? SiteDetailUiState.Success)?.site?.let { site ->
+                Column(
+                    modifier = Modifier.padding(16.dp),
+                    verticalArrangement = Arrangement.spacedBy(12.dp),
+                    horizontalAlignment = Alignment.End
                 ) {
-                    Icon(painter = painterResource(Res.drawable.fullscreen), contentDescription = "View Fullscreen")
+                    // Map FAB - only show if site has coordinates
+                    if (site.latitude != null && site.longitude != null) {
+                        SmallFloatingActionButton(
+                            onClick = { onShowOnMap(site.id) }
+                        ) {
+                            Icon(
+                                painter = painterResource(Res.drawable.map),
+                                contentDescription = "Show on Map"
+                            )
+                        }
+                    }
+                    // Fullscreen FAB
+                    FloatingActionButton(
+                        onClick = { onShowFullImage(site.id) }
+                    ) {
+                        Icon(
+                            painter = painterResource(Res.drawable.fullscreen),
+                            contentDescription = "View Fullscreen"
+                        )
+                    }
                 }
             }
         }

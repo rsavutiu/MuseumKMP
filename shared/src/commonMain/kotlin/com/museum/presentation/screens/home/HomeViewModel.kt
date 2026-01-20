@@ -31,6 +31,9 @@ class HomeViewModel(
     private val _viewMode = MutableStateFlow<ViewMode>(ViewMode.Grid)
     val viewMode: StateFlow<ViewMode> = _viewMode.asStateFlow()
 
+    private val _focusedSiteId = MutableStateFlow<Long?>(null)
+    val focusedSiteId: StateFlow<Long?> = _focusedSiteId.asStateFlow()
+
     init {
         com.museum.utils.LOG("HomeViewModel.init() - CREATED")
         loadSites()
@@ -94,6 +97,15 @@ class HomeViewModel(
     fun setViewMode(mode: ViewMode) {
         com.museum.utils.LOG("HomeViewModel.setViewMode() - CALLED with mode=$mode")
         _viewMode.value = mode
+    }
+
+    fun setFocusedSite(siteId: Long?) {
+        com.museum.utils.LOG("HomeViewModel.setFocusedSite() - CALLED with siteId=$siteId")
+        _focusedSiteId.value = siteId
+    }
+
+    fun clearFocusedSite() {
+        _focusedSiteId.value = null
     }
 
     private suspend fun groupSitesByCountry(sites: List<HeritageSite>): List<CountrySiteGroup> {

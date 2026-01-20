@@ -11,12 +11,16 @@ import com.museum.presentation.screens.map.MapScreen
 @Composable
 actual fun MapView(
     sites: List<HeritageSite>,
+    focusedSiteId: Long?,
     onSiteClick: (Long) -> Unit,
+    onClearFocusedSite: () -> Unit,
     modifier: Modifier
 ) {
     MapScreen(
         sites = sites,
+        focusedSiteId = focusedSiteId,
         onSiteClick = onSiteClick,
+        onClearFocusedSite = onClearFocusedSite,
         modifier = modifier
     )
 }
