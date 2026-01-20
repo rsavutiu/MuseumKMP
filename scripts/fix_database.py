@@ -96,8 +96,8 @@ class CompleteDatabaseFixer:
                 'fr': 'fr',
                 'ro': 'ro',
                 'tr': 'tr',
+                'pl': 'pl',
                 'hu': 'hu',
-                'nl': 'nl',
                 'hi': 'hi'
             }
             api_lang = lang_map.get(target_lang, target_lang)
@@ -122,7 +122,11 @@ class CompleteDatabaseFixer:
         query = """
             SELECT id, paintingname, description, author, location,
                    description_fr, description_es, description_de, description_it, description_pt,
-                   description_ru, description_ar, description_zh, description_ja,
+                   description_ru, description_ar, description_zh, description_ja, description_ro,
+                   description_tr, description_pl, description_hu, description_hi,
+                   paintingname_fr, paintingname_es, paintingname_de, paintingname_it, paintingname_pt,
+                   paintingname_ru, paintingname_ar, paintingname_zh, paintingname_ja, paintingname_ro,
+                   paintingname_tr, paintingname_pl, paintingname_hu, paintingname_hi,
                    style_fr, style_es, style_de
             FROM museum_item
             WHERE (author = 'UNESCO World Heritage Site' OR author IS NULL OR author = '')
@@ -135,9 +139,25 @@ class CompleteDatabaseFixer:
                OR (description_ar IS NULL OR description_ar = '')
                OR (description_zh IS NULL OR description_zh = '')
                OR (description_ja IS NULL OR description_ja = '')
-               OR (description_hi IS NULL OR description_nl = '')
-               OR (description_pl IS NULL OR description_tr = '')
-               OR (description_hu IS NULL)
+               OR (description_ro IS NULL OR description_ro = '')
+               OR (description_tr IS NULL OR description_tr = '')
+               OR (description_pl IS NULL OR description_pl = '')
+               OR (description_hu IS NULL OR description_hu = '')
+               OR (description_hi IS NULL OR description_hi = '')
+               OR (paintingname_fr IS NULL OR paintingname_fr = '')
+               OR (paintingname_es IS NULL OR paintingname_es = '')
+               OR (paintingname_de IS NULL OR paintingname_de = '')
+               OR (paintingname_it IS NULL OR paintingname_it = '')
+               OR (paintingname_pt IS NULL OR paintingname_pt = '')
+               OR (paintingname_ru IS NULL OR paintingname_ru = '')
+               OR (paintingname_ar IS NULL OR paintingname_ar = '')
+               OR (paintingname_zh IS NULL OR paintingname_zh = '')
+               OR (paintingname_ja IS NULL OR paintingname_ja = '')
+               OR (paintingname_ro IS NULL OR paintingname_ro = '')
+               OR (paintingname_tr IS NULL OR paintingname_tr = '')
+               OR (paintingname_pl IS NULL OR paintingname_pl = '')
+               OR (paintingname_hu IS NULL OR paintingname_hu = '')
+               OR (paintingname_hi IS NULL OR paintingname_hi = '')
                OR (style_fr IS NULL OR style_fr = '')
                OR (location IS NULL OR location = '')
             ORDER BY id
@@ -192,18 +212,29 @@ class CompleteDatabaseFixer:
             needs_location = not current_location or current_location.strip() == ''
 
             # Check which specific language translations are missing
-            missing_langs = []
+            missing_desc_langs = []
+            missing_name_langs = []
             for lang in self.LANGUAGES:
                 desc_key = f'description_{lang}'
+                name_key = f'paintingname_{lang}'
+
                 try:
                     desc_value = row[desc_key]
                     if not desc_value or not desc_value.strip():
-                        missing_langs.append(lang)
+                        missing_desc_langs.append(lang)
                 except (KeyError, IndexError):
                     # Column doesn't exist or can't be accessed
-                    missing_langs.append(lang)
+                    missing_desc_langs.append(lang)
 
-            needs_translations = len(missing_langs) > 0
+                try:
+                    name_value = row[name_key]
+                    if not name_value or not name_value.strip():
+                        missing_name_langs.append(lang)
+                except (KeyError, IndexError):
+                    # Column doesn't exist or can't be accessed
+                    missing_name_langs.append(lang)
+
+            needs_translations = len(missing_desc_langs) > 0 or len(missing_name_langs) > 0
 
             # Find UNESCO ID
             name_lower = site_name.lower().strip()
@@ -252,51 +283,99 @@ class CompleteDatabaseFixer:
             else:
                 country = None  # Invalid for translations
 
-            # STEP 2: Get description translations
-            if needs_translations and missing_langs:
-                logger.info(f"  Missing translations: {', '.join([l.upper() for l in missing_langs])}")
-                translations = {}
+            # STEP 2: Get description and name translations
+            if needs_translations:
+                desc_translations = {}
+                name_translations = {}
                 english_desc = row['description']
+                english_name = row['paintingname']
 
-                if not english_desc or not english_desc.strip():
-                    logger.warning(f"  ✗ No English description to translate from")
-                else:
-                    # Translate each missing language
-                    for lang in missing_langs:
-                        try:
-                            # Map language codes for Google Translate
-                            lang_map = {
-                                'zh': 'zh-CN',
-                                'ja': 'ja',
-                                'ar': 'ar',
-                                'ru': 'ru',
-                                'pt': 'pt',
-                                'it': 'it',
-                                'de': 'de',
-                                'es': 'es',
-                                'fr': 'fr',
-                                'ro': 'ro'
-                            }
-                            api_lang = lang_map.get(lang, lang)
+                # Translate descriptions
+                if missing_desc_langs:
+                    logger.info(f"  Missing description translations: {', '.join([l.upper() for l in missing_desc_langs])}")
+                    if not english_desc or not english_desc.strip():
+                        logger.warning(f"  ✗ No English description to translate from")
+                    else:
+                        for lang in missing_desc_langs:
+                            try:
+                                # Map language codes for Google Translate
+                                lang_map = {
+                                    'zh': 'zh-CN',
+                                    'ja': 'ja',
+                                    'ar': 'ar',
+                                    'ru': 'ru',
+                                    'pt': 'pt',
+                                    'it': 'it',
+                                    'de': 'de',
+                                    'es': 'es',
+                                    'fr': 'fr',
+                                    'ro': 'ro',
+                                    'tr': 'tr',
+                                    'pl': 'pl',
+                                    'hu': 'hu',
+                                    'hi': 'hi'
+                                }
+                                api_lang = lang_map.get(lang, lang)
 
-                            translator = GoogleTranslator(source='en', target=api_lang)
-                            translated = translator.translate(english_desc[:5000])
-                            if translated and translated.strip():
-                                translations[lang] = translated
-                                logger.info(f"    ✓ {lang.upper()}: {len(translated)} chars")
-                            else:
-                                logger.warning(f"    ✗ {lang.upper()}: Empty translation")
-                            time.sleep(0.3)  # Rate limit
-                        except Exception as e:
-                            logger.warning(f"    ✗ {lang.upper()} translation failed: {e}")
+                                translator = GoogleTranslator(source='en', target=api_lang)
+                                translated = translator.translate(english_desc[:5000])
+                                if translated and translated.strip():
+                                    desc_translations[lang] = translated
+                                    logger.info(f"    ✓ description_{lang.upper()}: {len(translated)} chars")
+                                else:
+                                    logger.warning(f"    ✗ description_{lang.upper()}: Empty translation")
+                                time.sleep(0.3)  # Rate limit
+                            except Exception as e:
+                                logger.warning(f"    ✗ description_{lang.upper()} translation failed: {e}")
 
-                # Update database
-                if translations:
+                # Translate painting names
+                if missing_name_langs:
+                    logger.info(f"  Missing name translations: {', '.join([l.upper() for l in missing_name_langs])}")
+                    if not english_name or not english_name.strip():
+                        logger.warning(f"  ✗ No English name to translate from")
+                    else:
+                        for lang in missing_name_langs:
+                            try:
+                                # Map language codes for Google Translate
+                                lang_map = {
+                                    'zh': 'zh-CN',
+                                    'ja': 'ja',
+                                    'ar': 'ar',
+                                    'ru': 'ru',
+                                    'pt': 'pt',
+                                    'it': 'it',
+                                    'de': 'de',
+                                    'es': 'es',
+                                    'fr': 'fr',
+                                    'ro': 'ro',
+                                    'tr': 'tr',
+                                    'pl': 'pl',
+                                    'hu': 'hu',
+                                    'hi': 'hi'
+                                }
+                                api_lang = lang_map.get(lang, lang)
+
+                                translator = GoogleTranslator(source='en', target=api_lang)
+                                translated = translator.translate(english_name)
+                                if translated and translated.strip():
+                                    name_translations[lang] = translated
+                                    logger.info(f"    ✓ paintingname_{lang.upper()}: {translated}")
+                                else:
+                                    logger.warning(f"    ✗ paintingname_{lang.upper()}: Empty translation")
+                                time.sleep(0.3)  # Rate limit
+                            except Exception as e:
+                                logger.warning(f"    ✗ paintingname_{lang.upper()} translation failed: {e}")
+
+                # Update database with all translations
+                if desc_translations or name_translations:
                     try:
                         updates = []
                         values = []
-                        for lang, text in translations.items():
+                        for lang, text in desc_translations.items():
                             updates.append(f"description_{lang} = ?")
+                            values.append(text)
+                        for lang, text in name_translations.items():
+                            updates.append(f"paintingname_{lang} = ?")
                             values.append(text)
 
                         if site_id is not None:
@@ -306,7 +385,7 @@ class CompleteDatabaseFixer:
                             sql = f"UPDATE museum_item SET {', '.join(updates)} WHERE paintingname = ? AND id IS NULL"
                             values.append(site_name)
 
-                        logger.info(f"  Writing {len(translations)} translations to DB")
+                        logger.info(f"  Writing {len(desc_translations)} desc + {len(name_translations)} name translations to DB")
                         cursor.execute(sql, values)
                         self.conn.commit()
                         stats['translations'] += 1
