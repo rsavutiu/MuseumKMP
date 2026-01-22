@@ -15,7 +15,12 @@
       "Bash(python validate_heritage_database.py:*)",
       "Bash(curl:*)",
       "Bash(python:*)",
-      "Bash(git commit:*)"
+      "Bash(git commit:*)",
+      "Bash(tee:*)",
+      "Bash(while true)",
+      "Bash(do clear)",
+      "Bash(done)",
+      "Bash(dir:*)"
     ]
   }
 }

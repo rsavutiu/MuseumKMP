@@ -1,6 +1,6 @@
 package com.museum.data.models
 
-import com.museum.utils.LocalizationManager
+import com.museum.utils.LanguagePreferences
 import com.museum.utils.SupportedLanguage
 
 data class Country(
@@ -21,7 +21,7 @@ data class Country(
     val nameHi: String? = null
 ) {
     fun getLocalizedName(): String {
-        val language = SupportedLanguage.fromCode(LocalizationManager.getCurrentLanguageCode())
+        val language = SupportedLanguage.fromCode(LanguagePreferences.getEffectiveLanguage())
         return when (language) {
             SupportedLanguage.ROMANIAN -> nameRo
             SupportedLanguage.ITALIAN -> nameIt

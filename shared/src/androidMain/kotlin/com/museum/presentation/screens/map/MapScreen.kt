@@ -123,7 +123,6 @@ fun MapScreen(
                     )
 
                     // Clear the focused site after navigation
-                    delay(3500)
                     onClearFocusedSite()
                 }
             }

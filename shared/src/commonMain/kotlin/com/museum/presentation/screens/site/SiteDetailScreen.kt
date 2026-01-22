@@ -141,7 +141,10 @@ fun SiteDetailScreen(
             when (val state = uiState) {
                 is SiteDetailUiState.Loading -> LoadingIndicator()
                 is SiteDetailUiState.Success -> {
-                    SiteDetailContent(site = state.site)
+                    SiteDetailContent(
+                        site = state.site,
+                        localizedCountries = state.localizedCountries
+                    )
                 }
                 is SiteDetailUiState.Error -> EmptyState(message = state.message)
             }
@@ -152,6 +155,7 @@ fun SiteDetailScreen(
 @Composable
 private fun SiteDetailContent(
     site: HeritageSite,
+    localizedCountries: String,
     modifier: Modifier = Modifier
 ) {
     Column(
@@ -200,9 +204,10 @@ private fun SiteDetailContent(
             Spacer(modifier = Modifier.height(8.dp))
         }
 
-        site.getLocalizedStyle()?.let {
+        // Display localized country names
+        if (localizedCountries.isNotBlank()) {
             Text(
-                text = it,
+                text = localizedCountries,
                 style = MaterialTheme.typography.bodyMedium,
                 color = MaterialTheme.colorScheme.onSurfaceVariant
             )
