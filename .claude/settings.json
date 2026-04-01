@@ -6,9 +6,9 @@
         "hooks": [
           {
             "type": "command",
-            "command": "cd /c/Users/rsavu/AndroidStudioProjects/museum-kmp && ./gradlew :androidApp:installDebug",
+            "command": "cd /c/Users/rsavu/AndroidStudioProjects/museum-kmp && ./gradlew :androidApp:installDebug && adb shell am start -n com.museum.android/com.museum.android.MainActivity",
             "async": true,
-            "statusMessage": "Building and installing app on device..."
+            "statusMessage": "Building, installing, and launching app on device..."
           }
         ]
       },
@@ -17,9 +17,9 @@
         "hooks": [
           {
             "type": "command",
-            "command": "cd /c/Users/rsavu/AndroidStudioProjects/museum-kmp && ./gradlew :androidApp:installDebug",
+            "command": "cd /c/Users/rsavu/AndroidStudioProjects/museum-kmp && ./gradlew :androidApp:installDebug && adb shell am start -n com.museum.android/com.museum.android.MainActivity",
             "async": true,
-            "statusMessage": "Building and installing app on device..."
+            "statusMessage": "Building, installing, and launching app on device..."
           }
         ]
       }
