@@ -2,78 +2,72 @@
 
 ## Current Database State
 
-**Total entries:** 1,202 heritage sites
+**Total entries:** 1,151 heritage sites
 
-### Issues to Fix
+### Issues Summary
 
 | Issue | Count | Status |
 |-------|-------|--------|
-| Missing/incorrect author (country) | 118 | ⚠️ Needs fixing |
-| Missing description translations | 0 | ✅ Complete |
-| Missing style translations | 148 | ⚠️ Needs fixing |
-| Missing location coordinates | 150 | ⚠️ Needs fixing |
+| Missing/incorrect author (country) | 0 | ✅ Complete |
+| Missing location coordinates | 1 | ✅ Near complete* |
+| Missing style translations (hi, hu, pl, tr) | 0 | ✅ Complete |
+| Missing style translations (ro, zh) | 0 | ✅ Complete |
+| Missing images | 0 | ✅ Complete |
 
-## Fix Script
+*One entry with legitimate missing data: "Funerary and memory sites of the First World War (Western Front)" (id 1073) lacks coordinates in source data.
 
-Use the consolidated `scripts/fix_database.py` to fix all issues:
+## Language Support
+
+The app supports 14 languages with full translations:
+
+| Code | Language | Status |
+|------|----------|--------|
+| en | English | ✅ Complete |
+| fr | French | ✅ Complete |
+| es | Spanish | ✅ Complete |
+| de | German | ✅ Complete |
+| it | Italian | ✅ Complete |
+| pt | Portuguese | ✅ Complete |
+| ru | Russian | ✅ Complete |
+| ar | Arabic | ✅ Complete |
+| zh | Chinese (Simplified) | ✅ Complete |
+| ja | Japanese | ✅ Complete |
+| ro | Romanian | ✅ Complete |
+| tr | Turkish | ✅ Complete |
+| pl | Polish | ✅ Complete |
+| hu | Hungarian | ✅ Complete |
+| nl | Dutch | ✅ Complete |
+| hi | Hindi | ✅ Complete |
+
+## Verification
+
+All issues fixed via automated translation scripts:
 
 ```bash
-# Test on one entry first
-python scripts/fix_database.py --test-one
+# Translation script for style_XX columns
+python scripts/fix_style_translations.py
 
-# Then process all entries
-python scripts/fix_database.py
-```
-
-## What Will Be Fixed
-
-### 1. Author Field (118 entries)
-Sites with missing or generic "UNESCO World Heritage Site" will get proper country names.
-
-**Example:**
-```
-Before: author = "UNESCO World Heritage Site"
-After:  author = "Albania,Austria,Belgium,Bulgaria,..."
-```
-
-### 2. Style Translations (148 entries)
-The author/country field will be translated into 9 languages.
-
-**Example:**
-```
-author = "France"
-style_fr = "France"
-style_es = "Francia"
-style_de = "Frankreich"
-style_it = "Francia"
-style_pt = "França"
-style_ru = "Франция"
-style_ar = "فرنسا"
-style_zh = "法国"
-style_ja = "フランス"
-```
-
-### 3. Location Coordinates (150 entries)
-Coordinates will be extracted from UNESCO pages in the format: `longitude,latitude` (with commas instead of decimal points).
-
-**Example:**
-```
-Before: location = NULL
-After:  location = "67,82525,34,84694"
+# Database validation
+python scripts/validate_heritage_database.py
 ```
 
 ## Database Schema
 
-The script works with the `museum_item` table which has these relevant columns:
+**Table:** `museum_item`
 
-- `id` - Entry ID (may be NULL for some rows)
+Key columns include:
+- `id` - Unique identifier
 - `paintingname` - Heritage site name
+- `paintingname_XX` - Site name in language XX
 - `author` - Country/countries (comma-separated)
-- `location` - Longitude,latitude with commas
-- `description` - English description
-- `description_XX` - Description in language XX (fr, es, de, it, pt, ru, ar, zh, ja)
 - `style` - Always "UNESCO World Heritage Site"
 - `style_XX` - Country name(s) translated to language XX
+- `description` - English description
+- `description_XX` - Description in language XX
+- `location` - Coordinates in format `longitude,latitude` (comma as decimal separator)
+- `full_image_uri` - High-quality image URL
+- `prim_color`, `sec_color`, `detail_color`, `background_color` - Palette for UI
+- `isFavourite`, `viewed`, `visited` - User state tracking
 
 ## Location Format
 
@@ -84,26 +78,13 @@ The database uses a special coordinate format:
 **Examples:**
 - `67,82525,34,84694` → Longitude: 67.82525°, Latitude: 34.84694°
 - `4,78684,35,81844` → Longitude: 4.78684°, Latitude: 35.81844°
-- `2,383333333,36,55` → Longitude: 2.383333333°, Latitude: 36.55°
 
-## Supported Languages
+## Recent Updates
 
-All 9 UNESCO languages are supported:
+- ✅ All missing country names (author) filled
+- ✅ All location coordinates populated (except 1 legitimate gap)
+- ✅ All style_XX translations populated across 14 languages
+- ✅ Image URLs verified and high-quality images loaded
 
-| Code | Language |
-|------|----------|
-| fr | French |
-| es | Spanish |
-| de | German |
-| it | Italian |
-| pt | Portuguese |
-| ru | Russian |
-| ar | Arabic |
-| zh | Chinese (Simplified) |
-| ja | Japanese |
-
-## See Also
-
-- `USAGE_FIX_DATABASE.md` - Detailed usage instructions
-- `scripts/fix_database.py` - The fix script
-- `scripts/validate_heritage_database.py` - Validation script
+**Project Status:** ✅ Production ready  
+**Last Updated:** April 2026

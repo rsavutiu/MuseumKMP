@@ -1,0 +1,28 @@
+{
+  "hooks": {
+    "PostToolUse": [
+      {
+        "matcher": "Edit(**.kt)",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "cd /c/Users/rsavu/AndroidStudioProjects/museum-kmp && ./gradlew :androidApp:installDebug",
+            "async": true,
+            "statusMessage": "Building and installing app on device..."
+          }
+        ]
+      },
+      {
+        "matcher": "Write(**.kt)",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "cd /c/Users/rsavu/AndroidStudioProjects/museum-kmp && ./gradlew :androidApp:installDebug",
+            "async": true,
+            "statusMessage": "Building and installing app on device..."
+          }
+        ]
+      }
+    ]
+  }
+}
