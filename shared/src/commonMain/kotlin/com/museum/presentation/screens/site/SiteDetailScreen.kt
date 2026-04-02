@@ -1,65 +1,35 @@
-﻿package com.museum.presentation.screens.site
+package com.museum.presentation.screens.site
 
-import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
-import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.automirrored.filled.ArrowBack
-import androidx.compose.material.icons.filled.Favorite
-import androidx.compose.material.icons.filled.FavoriteBorder
 import androidx.compose.material.icons.filled.LocationOn
-import androidx.compose.material.icons.outlined.FavoriteBorder
-import androidx.compose.material3.ExperimentalMaterial3Api
-import androidx.compose.material3.FloatingActionButton
-import androidx.compose.material3.HorizontalDivider
-import androidx.compose.material3.Icon
-import androidx.compose.material3.IconButton
-import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.Scaffold
-import androidx.compose.material3.SmallFloatingActionButton
-import androidx.compose.material3.Text
-import androidx.compose.material3.TopAppBar
-import androidx.compose.material3.TopAppBarDefaults
+import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.collectAsState
-import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
-import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import coil3.compose.AsyncImage
 import coil3.compose.LocalPlatformContext
 import coil3.request.ImageRequest
 import com.museum.data.models.HeritageSite
-import com.museum.presentation.components.EmptyState
-import com.museum.presentation.components.LoadingIndicator
-import com.museum.presentation.components.MarqueeText
-import com.whitelabel.core.presentation.detail.ItemDetailUiState
 import com.museum.utils.LOG
 import com.museum.utils.getDrawableResourceId
 import com.museum.utils.getPrimaryColor
 import com.museum.utils.toDrawableResourceName
+import com.whitelabel.core.presentation.detail.ItemDetailScreen
 import museumkmp.shared.generated.resources.Res
 import museumkmp.shared.generated.resources.fullscreen
 import museumkmp.shared.generated.resources.map
 import org.jetbrains.compose.resources.ExperimentalResourceApi
 import org.jetbrains.compose.resources.painterResource
 
-@OptIn(ExperimentalMaterial3Api::class, ExperimentalResourceApi::class)
+@OptIn(ExperimentalResourceApi::class)
 @Composable
 fun SiteDetailScreen(
     viewModel: SiteDetailViewModel,
@@ -67,92 +37,45 @@ fun SiteDetailScreen(
     onShowFullImage: (Long) -> Unit,
     onShowOnMap: (Long) -> Unit
 ) {
-    val uiState by viewModel.uiState.collectAsState()
-
-    @Suppress("UNCHECKED_CAST")
-    val successState = uiState as? ItemDetailUiState.Success<HeritageSite>
-    val site = successState?.item
-
-    Scaffold(
-        topBar = {
-            site?.let {
-                TopAppBar(
-                    title = {
-                        MarqueeText(
-                            text = it.getLocalizedName(),
-                            style = MaterialTheme.typography.titleLarge,
-                            color = Color.White
-                        )
-                    },
-                    navigationIcon = {
-                        IconButton(onClick = onBackClick) {
-                            Icon(Icons.AutoMirrored.Filled.ArrowBack, contentDescription = "Back")
-                        }
-                    },
-                    actions = {
-                        IconButton(onClick = { viewModel.onFavoriteClick(it) }) {
-                            Icon(
-                                imageVector = if (it.isFavorite) Icons.Filled.Favorite else Icons.Outlined.FavoriteBorder,
-                                contentDescription = if (it.isFavorite) "Remove from favorites" else "Add to favorites",
-                                tint = Color.White
-                            )
-                        }
-                    },
-                    colors = TopAppBarDefaults.topAppBarColors(
-                        containerColor = it.getPrimaryColor(),
-                        titleContentColor = Color.White,
-                        navigationIconContentColor = Color.White,
-                        actionIconContentColor = Color.White
-                    )
-                )
-            }
-        },
-        floatingActionButton = {
-            site?.let { s ->
-                Column(
-                    modifier = Modifier.padding(16.dp),
-                    verticalArrangement = Arrangement.spacedBy(12.dp),
-                    horizontalAlignment = Alignment.End
-                ) {
-                    if (s.latitude != null && s.longitude != null) {
-                        SmallFloatingActionButton(
-                            onClick = { onShowOnMap(s.id) }
-                        ) {
-                            Icon(
-                                painter = painterResource(Res.drawable.map),
-                                contentDescription = "Show on Map"
-                            )
-                        }
-                    }
-                    FloatingActionButton(
-                        onClick = { onShowFullImage(s.id) }
+    ItemDetailScreen(
+        viewModel = viewModel,
+        onBackClick = onBackClick,
+        title = { it.getLocalizedName() },
+        topBarColor = { it.getPrimaryColor() },
+        topBarContentColor = { Color.White },
+        floatingActionButton = { site ->
+            Column(
+                modifier = Modifier.padding(16.dp),
+                verticalArrangement = Arrangement.spacedBy(12.dp),
+                horizontalAlignment = Alignment.End
+            ) {
+                if (site.latitude != null && site.longitude != null) {
+                    SmallFloatingActionButton(
+                        onClick = { onShowOnMap(site.id) }
                     ) {
                         Icon(
-                            painter = painterResource(Res.drawable.fullscreen),
-                            contentDescription = "View Fullscreen"
+                            painter = painterResource(Res.drawable.map),
+                            contentDescription = "Show on Map"
                         )
                     }
                 }
-            }
-        }
-    ) { paddingValues ->
-        Box(
-            modifier = Modifier
-                .fillMaxSize()
-                .padding(paddingValues)
-        ) {
-            when (uiState) {
-                is ItemDetailUiState.Loading -> LoadingIndicator()
-                is ItemDetailUiState.Success<*> -> {
-                    SiteDetailContent(
-                        site = site!!,
-                        localizedCountries = successState!!.localizedGroupName ?: ""
+                FloatingActionButton(
+                    onClick = { onShowFullImage(site.id) }
+                ) {
+                    Icon(
+                        painter = painterResource(Res.drawable.fullscreen),
+                        contentDescription = "View Fullscreen"
                     )
                 }
-                is ItemDetailUiState.Error -> EmptyState(message = (uiState as ItemDetailUiState.Error).message)
             }
+        },
+        content = { site, localizedGroupName ->
+            SiteDetailContent(
+                site = site,
+                localizedCountries = localizedGroupName ?: ""
+            )
         }
-    }
+    )
 }
 
 @Composable
@@ -207,7 +130,6 @@ private fun SiteDetailContent(
             Spacer(modifier = Modifier.height(8.dp))
         }
 
-        // Display localized country names
         if (localizedCountries.isNotBlank()) {
             Text(
                 text = localizedCountries,
