@@ -16,7 +16,7 @@ import com.museum.presentation.screens.detail.DetailScreen
 import com.museum.presentation.screens.detail.DetailViewModel
 import com.museum.presentation.screens.home.HomeScreen
 import com.museum.presentation.screens.home.HomeViewModel
-import com.museum.presentation.screens.home.ViewMode
+import com.whitelabel.core.presentation.home.ViewMode
 import com.museum.presentation.screens.language.LanguageSelectionScreen
 import com.museum.presentation.screens.language.LanguageSelectionViewModel
 import com.museum.presentation.screens.site.SiteDetailScreen
@@ -60,7 +60,7 @@ fun AppNavigation() {
                     onShowFullImage = { id -> navController.navigate("detail/$id") },
                     onShowOnMap = { id ->
                         homeViewModel.setViewMode(ViewMode.Map)
-                        homeViewModel.setFocusedSite(id)
+                        homeViewModel.setFocusedItem(id)
                         navController.navigate("home") {
                             popUpTo("home") { inclusive = true }
                         }

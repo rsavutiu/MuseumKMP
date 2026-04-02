@@ -18,8 +18,11 @@ import androidx.compose.ui.unit.dp
 import coil3.compose.AsyncImage
 import coil3.compose.LocalPlatformContext
 import coil3.request.ImageRequest
+import com.museum.data.models.HeritageSite
 import com.museum.presentation.components.LoadingIndicator
-import com.museum.utils.withNetworkTrafficTag // <-- Import the new utility
+import com.whitelabel.core.presentation.detail.ItemDetailUiState
+import com.whitelabel.core.presentation.detail.WallpaperStatus
+import com.museum.utils.withNetworkTrafficTag
 import museumkmp.shared.generated.resources.Res
 import museumkmp.shared.generated.resources.wallpaper
 import org.jetbrains.compose.resources.ExperimentalResourceApi
@@ -52,14 +55,14 @@ fun DetailScreen(
         }
     }
 
+    @Suppress("UNCHECKED_CAST")
+    val site = (uiState as? ItemDetailUiState.Success<HeritageSite>)?.item
+
     Scaffold(
         topBar = {
             TopAppBar(
                 title = {
-                    when (val state = uiState) {
-                        is DetailUiState.Success -> Text(state.site.getLocalizedName())
-                        else -> Text("Detail")
-                    }
+                    Text(site?.getLocalizedName() ?: "Detail")
                 },
                 navigationIcon = {
                     IconButton(onClick = onNavigateBack) {
@@ -74,7 +77,7 @@ fun DetailScreen(
             )
         },
         floatingActionButton = {
-            if (uiState is DetailUiState.Success) {
+            if (uiState is ItemDetailUiState.Success<*>) {
                 FloatingActionButton(
                     onClick = { viewModel.setAsWallpaper() },
                     containerColor = MaterialTheme.colorScheme.primaryContainer
@@ -97,17 +100,17 @@ fun DetailScreen(
         snackbarHost = { SnackbarHost(snackbarHostState) }
     ) { paddingValues ->
         Box(modifier = modifier.fillMaxSize().padding(paddingValues)) {
-            when (val state = uiState) {
-                is DetailUiState.Loading -> LoadingIndicator()
-                is DetailUiState.Error -> {
+            when (uiState) {
+                is ItemDetailUiState.Loading -> LoadingIndicator()
+                is ItemDetailUiState.Error -> {
                     Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
-                        Text(state.message)
+                        Text((uiState as ItemDetailUiState.Error).message)
                     }
                 }
-                is DetailUiState.Success -> {
+                is ItemDetailUiState.Success<*> -> {
                     ZoomableImage(
-                        imageUrl = state.site.imageUrl,
-                        siteName = state.site.getLocalizedName()
+                        imageUrl = site!!.imageUrl,
+                        siteName = site.getLocalizedName()
                     )
                 }
             }

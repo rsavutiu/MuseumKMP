@@ -27,13 +27,15 @@ import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.unit.dp
 import coil3.SingletonImageLoader
 import coil3.compose.LocalPlatformContext
-import com.museum.data.models.CountrySiteGroup
 import com.museum.data.models.HeritageSite
 import com.museum.presentation.components.EmptyState
 import com.museum.presentation.components.LoadingIndicator
 import com.museum.presentation.components.MapView
 import com.museum.presentation.components.SiteCard
 import com.museum.utils.ImagePreloader
+import com.whitelabel.core.domain.model.ItemGroup
+import com.whitelabel.core.presentation.home.HomeUiState
+import com.whitelabel.core.presentation.home.ViewMode
 
 @Composable
 fun HomeContent(
@@ -52,12 +54,13 @@ fun HomeContent(
             message = if (searchQuery.isBlank()) "No sites found" else "No results"
         )
         is HomeUiState.Error -> EmptyState(message = uiState.message)
-        is HomeUiState.Success -> {
-            // Only compose the active view to avoid memory issues
+        is HomeUiState.Success<*> -> {
+            @Suppress("UNCHECKED_CAST")
+            val successState = uiState as HomeUiState.Success<HeritageSite>
             when (viewMode) {
                 ViewMode.Map -> {
                     MapView(
-                        sites = uiState.sites,
+                        sites = successState.items,
                         focusedSiteId = focusedSiteId,
                         onSiteClick = onSiteClick,
                         onClearFocusedSite = onClearFocusedSite,
@@ -66,8 +69,8 @@ fun HomeContent(
                 }
                 ViewMode.Grid -> {
                     GridViewWithPreloading(
-                        sites = uiState.sites,
-                        groupedSites = uiState.groupedSites,
+                        sites = successState.items,
+                        groups = successState.groups,
                         onSiteClick = onSiteClick,
                         onFavoriteClick = onFavoriteClick,
                         modifier = modifier.fillMaxSize()
@@ -81,7 +84,7 @@ fun HomeContent(
 @Composable
 private fun GridViewWithPreloading(
     sites: List<HeritageSite>,
-    groupedSites: List<CountrySiteGroup>,
+    groups: List<ItemGroup<HeritageSite>>,
     onSiteClick: (Long) -> Unit,
     onFavoriteClick: (HeritageSite) -> Unit,
     modifier: Modifier = Modifier
@@ -125,23 +128,23 @@ private fun GridViewWithPreloading(
             horizontalArrangement = Arrangement.spacedBy(12.dp),
             verticalArrangement = Arrangement.spacedBy(12.dp)
         ) {
-            val totalEntries = groupedSites.sumOf { it.sites.size }
+            val totalEntries = groups.sumOf { it.items.size }
             item(span = { GridItemSpan(maxLineSpan) }) {
                 Text(
-                    text = "$totalEntries Heritage Sites (${sites.size} unique sites in ${groupedSites.size} countries)",
+                    text = "$totalEntries Heritage Sites (${sites.size} unique sites in ${groups.size} countries)",
                     style = MaterialTheme.typography.titleMedium,
                     modifier = Modifier.padding(bottom = 8.dp)
                 )
             }
 
-            groupedSites.forEach { group ->
+            groups.forEach { group ->
                 // Country header with divider
                 item(span = { GridItemSpan(maxLineSpan) }) {
                     Column(
                         modifier = Modifier.fillMaxWidth()
                     ) {
                         Text(
-                            text = "${group.country.getLocalizedName()} (${group.sites.size})",
+                            text = "${group.displayName} (${group.items.size})",
                             style = MaterialTheme.typography.headlineSmall,
                             color = MaterialTheme.colorScheme.primary,
                             modifier = Modifier.padding(top = 16.dp, bottom = 8.dp)
@@ -155,7 +158,7 @@ private fun GridViewWithPreloading(
                 }
 
                 // Sites for this country
-                items(items = group.sites, key = { "${it.id}_${it.name}_${group.country.name}" }) { site ->
+                items(items = group.items, key = { "${it.id}_${it.name}_${group.key}" }) { site ->
                     val onFavorite = remember(site) {
                         { onFavoriteClick(site) }
                     }

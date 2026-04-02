@@ -67,9 +67,9 @@ fun LanguageSelectionScreen(
             // All supported languages
             viewModel.getSupportedLanguages().forEach { language ->
                 LanguageItem(
-                    languageName = language.getTheLanguageDisplayName(),
+                    languageName = language.nativeName,
                     languageCode = language.code,
-                    isSelected = selectedLanguage == language,
+                    isSelected = selectedLanguage == language.code,
                     onClick = { viewModel.setLanguage(language) }
                 )
                 HorizontalDivider()

@@ -10,8 +10,11 @@ import com.museum.data.repository.MuseumRepository
 import com.museum.domain.usecases.GetSitesUseCase
 import com.museum.domain.usecases.SearchSiteUseCase
 import com.museum.domain.usecases.ToggleFavoriteUseCase
+import com.museum.presentation.HeritageItemGrouper
 import com.museum.utils.ImagePreloader
 import com.whitelabel.core.domain.language.LanguageProvider
+import com.whitelabel.core.domain.usecase.GetItemDetailUseCase
+import com.whitelabel.core.presentation.home.ItemGrouper
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.Dispatchers
 import org.koin.dsl.module
@@ -52,6 +55,13 @@ val commonModule = module {
         com.museum.utils.LOG("DI - Creating NEW ToggleFavoriteUseCase")
         ToggleFavoriteUseCase(get<IMuseumRepository>())
     }
+    factory {
+        com.museum.utils.LOG("DI - Creating NEW GetItemDetailUseCase")
+        GetItemDetailUseCase(get<IMuseumRepository>())
+    }
+
+    // ItemGrouper - Heritage-specific: groups by country
+    single<ItemGrouper<com.museum.data.models.HeritageSite>> { HeritageItemGrouper() }
 
     // Image Preloader - Singleton
     single { (context: PlatformContext) ->

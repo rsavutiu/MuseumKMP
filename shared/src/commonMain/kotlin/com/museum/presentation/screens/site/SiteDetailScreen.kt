@@ -48,6 +48,7 @@ import com.museum.data.models.HeritageSite
 import com.museum.presentation.components.EmptyState
 import com.museum.presentation.components.LoadingIndicator
 import com.museum.presentation.components.MarqueeText
+import com.whitelabel.core.presentation.detail.ItemDetailUiState
 import com.museum.utils.LOG
 import com.museum.utils.getDrawableResourceId
 import com.museum.utils.getPrimaryColor
@@ -68,9 +69,13 @@ fun SiteDetailScreen(
 ) {
     val uiState by viewModel.uiState.collectAsState()
 
+    @Suppress("UNCHECKED_CAST")
+    val successState = uiState as? ItemDetailUiState.Success<HeritageSite>
+    val site = successState?.item
+
     Scaffold(
         topBar = {
-            (uiState as? SiteDetailUiState.Success)?.site?.let {
+            site?.let {
                 TopAppBar(
                     title = {
                         MarqueeText(
@@ -103,16 +108,15 @@ fun SiteDetailScreen(
             }
         },
         floatingActionButton = {
-            (uiState as? SiteDetailUiState.Success)?.site?.let { site ->
+            site?.let { s ->
                 Column(
                     modifier = Modifier.padding(16.dp),
                     verticalArrangement = Arrangement.spacedBy(12.dp),
                     horizontalAlignment = Alignment.End
                 ) {
-                    // Map FAB - only show if site has coordinates
-                    if (site.latitude != null && site.longitude != null) {
+                    if (s.latitude != null && s.longitude != null) {
                         SmallFloatingActionButton(
-                            onClick = { onShowOnMap(site.id) }
+                            onClick = { onShowOnMap(s.id) }
                         ) {
                             Icon(
                                 painter = painterResource(Res.drawable.map),
@@ -120,9 +124,8 @@ fun SiteDetailScreen(
                             )
                         }
                     }
-                    // Fullscreen FAB
                     FloatingActionButton(
-                        onClick = { onShowFullImage(site.id) }
+                        onClick = { onShowFullImage(s.id) }
                     ) {
                         Icon(
                             painter = painterResource(Res.drawable.fullscreen),
@@ -138,15 +141,15 @@ fun SiteDetailScreen(
                 .fillMaxSize()
                 .padding(paddingValues)
         ) {
-            when (val state = uiState) {
-                is SiteDetailUiState.Loading -> LoadingIndicator()
-                is SiteDetailUiState.Success -> {
+            when (uiState) {
+                is ItemDetailUiState.Loading -> LoadingIndicator()
+                is ItemDetailUiState.Success<*> -> {
                     SiteDetailContent(
-                        site = state.site,
-                        localizedCountries = state.localizedCountries
+                        site = site!!,
+                        localizedCountries = successState!!.localizedGroupName ?: ""
                     )
                 }
-                is SiteDetailUiState.Error -> EmptyState(message = state.message)
+                is ItemDetailUiState.Error -> EmptyState(message = (uiState as ItemDetailUiState.Error).message)
             }
         }
     }

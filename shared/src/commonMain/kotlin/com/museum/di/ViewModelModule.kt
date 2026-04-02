@@ -1,9 +1,13 @@
 package com.museum.di
 
-import com.museum.presentation.screens.detail.DetailViewModel
+import com.museum.data.models.HeritageSite
+import com.museum.data.repository.IMuseumRepository
 import com.museum.presentation.screens.home.HomeViewModel
 import com.museum.presentation.screens.language.LanguageSelectionViewModel
 import com.museum.presentation.screens.site.SiteDetailViewModel
+import com.whitelabel.core.domain.language.LanguageProvider
+import com.whitelabel.core.domain.usecase.GetItemDetailUseCase
+import com.whitelabel.core.presentation.home.ItemGrouper
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.SupervisorJob
@@ -20,42 +24,36 @@ val viewModelModule = module {
     single {
         com.museum.utils.LOG("DI - Creating HomeViewModel (SINGLETON)")
         HomeViewModel(
-            getSitesUseCase = get(),
-            searchSiteUseCase = get(),
+            getItemsUseCase = get(),
+            searchItemsUseCase = get(),
             toggleFavoriteUseCase = get(),
-            repository = get(),
+            repository = get<IMuseumRepository>(),
+            itemGrouper = get<ItemGrouper<HeritageSite>>(),
+            languageProvider = get(),
             coroutineScope = get()
         )
     }
 
-    // SiteDetailViewModel - Factory with parameter
-    // Use parametersOf() for siteId
+    // ItemDetailViewModel<HeritageSite> - Factory with parameter
+    // Both SiteDetailViewModel and DetailViewModel are typealiases to this type
     factory { params ->
         val siteId = params.get<Long>()
-        com.museum.utils.LOG("DI - Creating NEW SiteDetailViewModel for siteId=$siteId")
+        com.museum.utils.LOG("DI - Creating NEW ItemDetailViewModel for siteId=$siteId")
         SiteDetailViewModel(
-            siteId = siteId,
-            repository = get(),
+            itemId = siteId,
+            getItemDetailUseCase = get<GetItemDetailUseCase<HeritageSite>>(),
             toggleFavoriteUseCase = get(),
-            coroutineScope = get()
-        )
-    }
-
-    // DetailViewModel - Factory with parameter
-    // Use parametersOf() for siteId
-    factory { params ->
-        val siteId = params.get<Long>()
-        com.museum.utils.LOG("DI - Creating NEW DetailViewModel for siteId=$siteId")
-        DetailViewModel(
-            siteId = siteId,
-            repository = get(),
+            repository = get<IMuseumRepository>(),
             wallpaperService = get(),
+            languageProvider = get(),
             coroutineScope = get()
         )
     }
 
     // LanguageSelectionViewModel - Factory
     factory {
-        LanguageSelectionViewModel()
+        LanguageSelectionViewModel(
+            languageProvider = get()
+        )
     }
 }

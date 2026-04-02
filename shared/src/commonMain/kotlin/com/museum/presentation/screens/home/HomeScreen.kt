@@ -19,6 +19,7 @@ import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
+import com.whitelabel.core.presentation.home.ViewMode
 import kotlinx.coroutines.launch
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -33,7 +34,7 @@ fun HomeScreen(
     val uiState by viewModel.uiState.collectAsState()
     val searchQuery by viewModel.searchQuery.collectAsState()
     val viewMode by viewModel.viewMode.collectAsState()
-    val focusedSiteId by viewModel.focusedSiteId.collectAsState()
+    val focusedSiteId by viewModel.focusedItemId.collectAsState()
     val drawerState = rememberDrawerState(DrawerValue.Closed)
     val scope = rememberCoroutineScope()
     var searchActive by rememberSaveable { mutableStateOf(false) }
@@ -74,7 +75,7 @@ fun HomeScreen(
                     focusedSiteId = focusedSiteId,
                     onSiteClick = onSiteClick,
                     onFavoriteClick = viewModel::onFavoriteClick,
-                    onClearFocusedSite = viewModel::clearFocusedSite
+                    onClearFocusedSite = viewModel::clearFocusedItem
                 )
             }
         }

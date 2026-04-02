@@ -7,6 +7,7 @@ import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
+import com.whitelabel.core.presentation.home.ViewMode
 import museumkmp.shared.generated.resources.Res
 import museumkmp.shared.generated.resources.map
 import museumkmp.shared.generated.resources.grid_view
