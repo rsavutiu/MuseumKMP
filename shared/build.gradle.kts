@@ -28,6 +28,7 @@ kotlin {
     sourceSets {
         val commonMain by getting {
             dependencies {
+                api("com.whitelabel:core:0.1.0")
                 implementation(compose.runtime)
                 implementation(compose.foundation)
                 implementation(compose.material3)
@@ -55,8 +56,6 @@ kotlin {
         val androidMain by getting {
             dependencies {
                 implementation(libs.sqldelight.driver.android)
-                implementation(libs.androidx.lifecycle.viewmodel)
-                implementation(libs.androidx.lifecycle.runtime.compose)
                 implementation(libs.ktor.client.okhttp)
                 implementation(libs.ktor.client.logging)
                 implementation(libs.koin.android)

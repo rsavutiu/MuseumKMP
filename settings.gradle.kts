@@ -3,6 +3,8 @@
 include(":androidApp")
 include(":shared")
 
+includeBuild("whitelabel-core")
+
 pluginManagement {
     repositories {
         google()

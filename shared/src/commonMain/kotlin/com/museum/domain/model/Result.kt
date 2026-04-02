@@ -1,30 +1,16 @@
+@file:Suppress("unused")
 package com.museum.domain.model
 
-sealed interface Result<out T> {
-    data class Success<T>(val data: T) : Result<T>
-    data class Error(val exception: Throwable) : Result<Nothing>
-}
+import com.whitelabel.core.domain.model.onSuccess as coreOnSuccess
+import com.whitelabel.core.domain.model.onError as coreOnError
+import com.whitelabel.core.domain.model.getOrNull as coreGetOrNull
+import com.whitelabel.core.domain.model.getOrThrow as coreGetOrThrow
 
-inline fun <T> Result<T>.onSuccess(action: (T) -> Unit): Result<T> {
-    if (this is Result.Success) action(data)
-    return this
-}
+// Typealias to core Result — all existing code keeps working
+typealias Result<T> = com.whitelabel.core.domain.model.Result<T>
 
-inline fun <T> Result<T>.onError(action: (Throwable) -> Unit): Result<T> {
-    if (this is Result.Error) action(exception)
-    return this
-}
-
-fun <T> Result<T>.getOrNull(): T? {
-    return when (this) {
-        is Result.Success -> data
-        is Result.Error -> null
-    }
-}
-
-fun <T> Result<T>.getOrThrow(): T {
-    return when (this) {
-        is Result.Success -> data
-        is Result.Error -> throw exception
-    }
-}
+// Re-export extension functions so existing imports keep working
+inline fun <T> Result<T>.onSuccess(action: (T) -> Unit): Result<T> = coreOnSuccess(action)
+inline fun <T> Result<T>.onError(action: (Throwable) -> Unit): Result<T> = coreOnError(action)
+fun <T> Result<T>.getOrNull(): T? = coreGetOrNull()
+fun <T> Result<T>.getOrThrow(): T = coreGetOrThrow()

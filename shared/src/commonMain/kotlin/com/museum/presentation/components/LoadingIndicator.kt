@@ -1,18 +1,9 @@
-﻿package com.museum.presentation.components
+package com.museum.presentation.components
 
-import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.material3.CircularProgressIndicator
+// Re-export from core so existing imports keep working
 import androidx.compose.runtime.Composable
-import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 
 @Composable
-fun LoadingIndicator(modifier: Modifier = Modifier) {
-    Box(
-        modifier = modifier.fillMaxSize(),
-        contentAlignment = Alignment.Center
-    ) {
-        CircularProgressIndicator()
-    }
-}
+fun LoadingIndicator(modifier: Modifier = Modifier) =
+    com.whitelabel.core.presentation.components.LoadingIndicator(modifier)

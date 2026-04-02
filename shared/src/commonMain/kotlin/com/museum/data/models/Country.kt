@@ -2,9 +2,11 @@ package com.museum.data.models
 
 import com.museum.utils.LanguagePreferences
 import com.museum.utils.SupportedLanguage
+import com.whitelabel.core.domain.model.GroupMetadata
+import com.whitelabel.core.domain.model.LocalizedFieldSet
 
 data class Country(
-    val name: String,
+    override val name: String,
     val nameRo: String? = null,
     val nameIt: String? = null,
     val nameEs: String? = null,
@@ -19,7 +21,31 @@ data class Country(
     val namePl: String? = null,
     val nameHu: String? = null,
     val nameHi: String? = null
-) {
+) : GroupMetadata {
+
+    override val key: String get() = name
+
+    override val localizedFields: LocalizedFieldSet
+        get() = LocalizedFieldSet(
+            names = buildMap {
+                nameRo?.let { put("ro", it) }
+                nameIt?.let { put("it", it) }
+                nameEs?.let { put("es", it) }
+                nameDe?.let { put("de", it) }
+                nameFr?.let { put("fr", it) }
+                namePt?.let { put("pt", it) }
+                nameRu?.let { put("ru", it) }
+                nameAr?.let { put("ar", it) }
+                nameZh?.let { put("zh", it) }
+                nameJa?.let { put("ja", it) }
+                nameTr?.let { put("tr", it) }
+                namePl?.let { put("pl", it) }
+                nameHu?.let { put("hu", it) }
+                nameHi?.let { put("hi", it) }
+            }
+        )
+
+    // Legacy no-arg method (backward compat)
     fun getLocalizedName(): String {
         val language = SupportedLanguage.fromCode(LanguagePreferences.getEffectiveLanguage())
         return when (language) {

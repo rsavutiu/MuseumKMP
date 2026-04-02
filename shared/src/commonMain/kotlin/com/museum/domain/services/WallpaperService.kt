@@ -1,5 +1,3 @@
 package com.museum.domain.services
 
-interface WallpaperService {
-    suspend fun setWallpaper(imageUrl: String): Result<Unit>
-}
+typealias WallpaperService = com.whitelabel.core.domain.service.WallpaperService

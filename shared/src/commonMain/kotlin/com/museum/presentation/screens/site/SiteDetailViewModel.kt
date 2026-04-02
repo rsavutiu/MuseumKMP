@@ -1,11 +1,11 @@
 ﻿package com.museum.presentation.screens.site
 
-import androidx.lifecycle.ViewModel
+import com.museum.presentation.ViewModel
 import com.museum.data.models.Country
 import com.museum.data.models.HeritageSite
 import com.museum.data.repository.IMuseumRepository
 import com.museum.data.repository.MuseumRepository
-import com.museum.domain.model.Result
+import com.whitelabel.core.domain.model.Result
 import com.museum.domain.usecases.ToggleFavoriteUseCase
 import com.museum.utils.LanguagePreferences
 import kotlinx.coroutines.CoroutineScope
@@ -66,7 +66,7 @@ class SiteDetailViewModel(
         // Fetch country translations from database
         val countryTranslations = when (val result = repository.getCountryTranslations(countryNames)) {
             is Result.Success -> result.data
-            is Result.Error -> emptyMap()
+            is Result.Error -> emptyMap<String, Country>()
         }
 
         // Build localized country string

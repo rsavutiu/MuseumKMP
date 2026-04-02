@@ -1,18 +1,20 @@
-﻿package com.museum.data.models
+package com.museum.data.models
 
 import com.museum.utils.LanguagePreferences
 import com.museum.utils.SupportedLanguage
+import com.whitelabel.core.domain.model.DisplayableItem
+import com.whitelabel.core.domain.model.LocalizedFieldSet
 
 data class HeritageSite(
-    val id: Long,
-    val name: String,
+    override val id: Long,
+    override val name: String,
     val author: String?,
-    val description: String?,
+    override val description: String?,
     val location: String?,
     val style: String?,
     val imageUrl: String?,
-    val isFavorite: Boolean = false,
-    val wasViewed: Boolean = false,
+    override val isFavorite: Boolean = false,
+    override val wasViewed: Boolean = false,
     // Localized names
     val nameRo: String? = null,
     val nameIt: String? = null,
@@ -60,16 +62,28 @@ data class HeritageSite(
     val styleHu: String? = null,
     val stylePl: String? = null,
     // Colors and location
-    val primaryColor: Int? = null,
-    val secondaryColor: Int? = null,
-    val backgroundColor: Int? = null,
-    val detailColor: Int? = null,
-    val latitude: Double? = null,
-    val longitude: Double? = null
-) {
+    override val primaryColor: Int? = null,
+    override val secondaryColor: Int? = null,
+    override val backgroundColor: Int? = null,
+    override val detailColor: Int? = null,
+    override val latitude: Double? = null,
+    override val longitude: Double? = null,
+    override val localizedFields: LocalizedFieldSet = LocalizedFieldSet()
+) : DisplayableItem {
+
+    override val imageUrls: List<String>
+        get() = imageUrl?.split(",")?.map { it.trim() } ?: emptyList()
+
+    override val category: String?
+        get() = style
+
+    override val groupKey: String?
+        get() = author
+
     val countries: List<String>
         get() = author?.split(",")?.map { it.trim() } ?: emptyList()
 
+    // Legacy no-arg methods using global state (backward compat for existing callers)
     fun getLocalizedName(): String {
         val language = SupportedLanguage.fromCode(LanguagePreferences.getEffectiveLanguage())
         return when (language) {

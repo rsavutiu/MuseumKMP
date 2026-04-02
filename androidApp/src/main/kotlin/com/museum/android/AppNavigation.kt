@@ -23,7 +23,7 @@ import com.museum.presentation.screens.site.SiteDetailScreen
 import com.museum.presentation.screens.site.SiteDetailViewModel
 import com.museum.utils.LOG
 import kotlinx.coroutines.launch
-import org.koin.androidx.compose.koinViewModel
+import org.koin.compose.koinInject
 import org.koin.core.parameter.parametersOf
 
 @Composable
@@ -32,16 +32,15 @@ fun AppNavigation() {
     val snackbarHostState = remember { SnackbarHostState() }
     val scope = rememberCoroutineScope()
 
+    // HomeViewModel is a Koin singleton — same instance everywhere
+    val homeViewModel: HomeViewModel = koinInject()
+
     NavHost(navController = navController, startDestination = "main_graph") {
         navigation(startDestination = "home", route = "main_graph") {
             composable("home") {
-                val parentEntry = remember(navController.currentBackStackEntry) {
-                    navController.getBackStackEntry("main_graph")
-                }
-                val viewModel: HomeViewModel = koinViewModel(viewModelStoreOwner = parentEntry)
-                LOG("HomeViewModel: $viewModel")
+                LOG("HomeViewModel: $homeViewModel")
                 HomeScreen(
-                    viewModel = viewModel,
+                    viewModel = homeViewModel,
                     onSiteClick = { siteId -> navController.navigate("site/$siteId") },
                     onNavigateToLanguage = { navController.navigate("language") },
                     snackbarHostState = snackbarHostState
@@ -53,11 +52,7 @@ fun AppNavigation() {
                 arguments = listOf(navArgument("siteId") { type = NavType.LongType })
             ) { backStackEntry ->
                 val siteId = backStackEntry.arguments?.getLong("siteId") ?: return@composable
-                val viewModel: SiteDetailViewModel = koinViewModel { parametersOf(siteId) }
-                val parentEntry = remember(navController.currentBackStackEntry) {
-                    navController.getBackStackEntry("main_graph")
-                }
-                val homeViewModel: HomeViewModel = koinViewModel(viewModelStoreOwner = parentEntry)
+                val viewModel: SiteDetailViewModel = koinInject { parametersOf(siteId) }
 
                 SiteDetailScreen(
                     viewModel = viewModel,
@@ -80,7 +75,7 @@ fun AppNavigation() {
                 LOG("AppNavigation - COMPOSING detail route")
                 val siteId = backStackEntry.arguments?.getLong("siteId") ?: return@composable
                 LOG("AppNavigation - detail route siteId=$siteId")
-                val viewModel: DetailViewModel = koinViewModel { parametersOf(siteId) }
+                val viewModel: DetailViewModel = koinInject { parametersOf(siteId) }
                 LOG("AppNavigation - DetailViewModel obtained: $viewModel")
 
                 DetailScreen(
@@ -93,10 +88,7 @@ fun AppNavigation() {
             }
 
             composable("language") {
-                val parentEntry = remember(navController.currentBackStackEntry) {
-                    navController.getBackStackEntry("main_graph")
-                }
-                val viewModel: LanguageSelectionViewModel = koinViewModel(viewModelStoreOwner = parentEntry)
+                val viewModel: LanguageSelectionViewModel = koinInject()
                 LanguageSelectionScreen(
                     viewModel = viewModel,
                     onNavigateBack = { navController.popBackStack() },

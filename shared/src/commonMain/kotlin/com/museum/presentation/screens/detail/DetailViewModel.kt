@@ -1,8 +1,8 @@
 package com.museum.presentation.screens.detail
 
-import androidx.lifecycle.ViewModel
+import com.museum.presentation.ViewModel
 import com.museum.data.models.HeritageSite
-import com.museum.domain.model.Result
+import com.whitelabel.core.domain.model.Result
 import com.museum.domain.services.WallpaperService
 import com.museum.domain.usecases.GetSitesUseCase
 import kotlinx.coroutines.CoroutineScope

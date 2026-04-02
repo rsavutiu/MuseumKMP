@@ -1,11 +1,11 @@
 ﻿package com.museum.presentation.screens.home
 
-import androidx.lifecycle.ViewModel
+import com.museum.presentation.ViewModel
 import com.museum.data.models.Country
 import com.museum.data.models.CountrySiteGroup
 import com.museum.data.models.HeritageSite
 import com.museum.data.repository.IMuseumRepository
-import com.museum.domain.model.Result
+import com.whitelabel.core.domain.model.Result
 import com.museum.domain.usecases.GetSitesUseCase
 import com.museum.domain.usecases.SearchSiteUseCase
 import com.museum.domain.usecases.ToggleFavoriteUseCase

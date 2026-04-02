@@ -5,7 +5,8 @@ import com.museum.data.mapper.HeritageSiteMapper.toHeritageSite
 import com.museum.data.mapper.HeritageSiteMapper.toHeritageSites
 import com.museum.data.models.Country
 import com.museum.data.models.HeritageSite
-import com.museum.domain.model.Result
+import com.whitelabel.core.domain.model.Result
+import com.whitelabel.core.domain.model.GroupMetadata
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.flow.first
@@ -77,22 +78,10 @@ class MuseumRepository(private val dataSource: HeritageSiteLocalDataSource) : IM
             }
             .catch { emit(Result.Error(it)) }
 
-    override suspend fun toggleFavorite(site: HeritageSite): Result<Unit> {
-        com.museum.utils.LOG("MuseumRepository.toggleFavorite() - CALLED for site ${site.id}, newValue=${!site.isFavorite}")
+    override suspend fun markAsViewed(itemId: Long): Result<Unit> {
+        com.museum.utils.LOG("MuseumRepository.markAsViewed() - CALLED for site $itemId")
         return try {
-            dataSource.updateFavorite(site.id, !site.isFavorite)
-            com.museum.utils.LOG("MuseumRepository.toggleFavorite() - SUCCESS")
-            Result.Success(Unit)
-        } catch (e: Exception) {
-            com.museum.utils.LOG("MuseumRepository.toggleFavorite() - ERROR: ${e.message}")
-            Result.Error(e)
-        }
-    }
-
-    override suspend fun markAsViewed(siteId: Long): Result<Unit> {
-        com.museum.utils.LOG("MuseumRepository.markAsViewed() - CALLED for site $siteId")
-        return try {
-            dataSource.markAsViewed(siteId)
+            dataSource.markAsViewed(itemId)
             com.museum.utils.LOG("MuseumRepository.markAsViewed() - SUCCESS")
             Result.Success(Unit)
         } catch (e: Exception) {
@@ -130,6 +119,38 @@ class MuseumRepository(private val dataSource: HeritageSiteLocalDataSource) : IM
             Result.Success(countries)
         } catch (e: Exception) {
             Result.Error(e)
+        }
+    }
+
+    // === ItemRepository<HeritageSite> core interface methods ===
+
+    override fun getAllItems(): Flow<Result<List<HeritageSite>>> = getAllSites()
+
+    override fun getItemById(id: Long): Flow<Result<HeritageSite?>> = getSiteById(id)
+
+    override fun getFavoriteItems(): Flow<Result<List<HeritageSite>>> = getFavoriteSites()
+
+    override fun searchItems(query: String, languageCode: String): Flow<Result<List<HeritageSite>>> =
+        searchSites(query) // TODO: pass languageCode to datasource in Phase 4
+
+    override suspend fun toggleFavorite(item: HeritageSite): Result<Unit> {
+        com.museum.utils.LOG("MuseumRepository.toggleFavorite() - CALLED for site ${item.id}, newValue=${!item.isFavorite}")
+        return try {
+            dataSource.updateFavorite(item.id, !item.isFavorite)
+            com.museum.utils.LOG("MuseumRepository.toggleFavorite() - SUCCESS")
+            Result.Success(Unit)
+        } catch (e: Exception) {
+            com.museum.utils.LOG("MuseumRepository.toggleFavorite() - ERROR: ${e.message}")
+            Result.Error(e)
+        }
+    }
+
+    override suspend fun getItemCount(): Result<Long> = getSiteCount()
+
+    override suspend fun getGroupMetadata(groupKeys: List<String>): Result<Map<String, GroupMetadata>> {
+        return when (val result = getCountryTranslations(groupKeys)) {
+            is Result.Success -> Result.Success(result.data.mapValues { it.value as GroupMetadata })
+            is Result.Error -> Result.Error(result.exception)
         }
     }
 }

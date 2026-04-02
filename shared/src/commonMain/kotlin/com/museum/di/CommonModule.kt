@@ -3,6 +3,7 @@ package com.museum.di
 import coil3.ImageLoader
 import coil3.PlatformContext
 import coil3.annotation.ExperimentalCoilApi
+import com.museum.data.HeritageLanguageProvider
 import com.museum.data.datasource.HeritageSiteLocalDataSource
 import com.museum.data.repository.IMuseumRepository
 import com.museum.data.repository.MuseumRepository
@@ -10,6 +11,7 @@ import com.museum.domain.usecases.GetSitesUseCase
 import com.museum.domain.usecases.SearchSiteUseCase
 import com.museum.domain.usecases.ToggleFavoriteUseCase
 import com.museum.utils.ImagePreloader
+import com.whitelabel.core.domain.language.LanguageProvider
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.Dispatchers
 import org.koin.dsl.module
@@ -34,18 +36,21 @@ val commonModule = module {
         MuseumRepository(get())
     }
 
-    // Use Cases - Factory (lightweight, can be created each time)
+    // Language Provider - Singleton
+    single<LanguageProvider> { HeritageLanguageProvider() }
+
+    // Use Cases - Factory (now backed by core generic use cases via typealiases)
     factory {
         com.museum.utils.LOG("DI - Creating NEW GetSitesUseCase")
-        GetSitesUseCase(get())
+        GetSitesUseCase(get<IMuseumRepository>())
     }
     factory {
         com.museum.utils.LOG("DI - Creating NEW SearchSiteUseCase")
-        SearchSiteUseCase(get())
+        SearchSiteUseCase(get<IMuseumRepository>(), get())
     }
     factory {
         com.museum.utils.LOG("DI - Creating NEW ToggleFavoriteUseCase")
-        ToggleFavoriteUseCase(get())
+        ToggleFavoriteUseCase(get<IMuseumRepository>())
     }
 
     // Image Preloader - Singleton
