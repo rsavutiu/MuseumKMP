@@ -10,6 +10,9 @@ import androidx.compose.ui.unit.dp
 import com.whitelabel.core.presentation.home.ViewMode
 import com.whitelabel.platform.presentation.screens.home.CatalogNavigationDrawer
 import com.whitelabel.platform.presentation.screens.home.DrawerMenuItem
+import com.whitelabel.platform.utils.debugLogD
+import com.whitelabel.platform.utils.logLifecycle
+import com.whitelabel.platform.utils.logUserAction
 import museumkmp.shared.generated.resources.Res
 import museumkmp.shared.generated.resources.grid_view
 import museumkmp.shared.generated.resources.language
@@ -17,6 +20,8 @@ import museumkmp.shared.generated.resources.map
 import org.jetbrains.compose.resources.DrawableResource
 import org.jetbrains.compose.resources.ExperimentalResourceApi
 import org.jetbrains.compose.resources.painterResource
+
+private const val TAG = "HomeDrawerContent"
 
 @OptIn(ExperimentalResourceApi::class)
 @Composable
@@ -27,6 +32,8 @@ fun HomeDrawerContent(
     onCloseDrawer: () -> Unit,
     modifier: Modifier = Modifier
 ) {
+    logLifecycle(TAG, "Composable entered, currentViewMode=$viewMode")
+    
     val menuItems = listOf(
         DrawerMenuItem(
             label = "Grid View",
@@ -48,12 +55,19 @@ fun HomeDrawerContent(
 
     CatalogNavigationDrawer(
         currentViewMode = viewMode,
-        onViewModeChange = onViewModeChange,
+        onViewModeChange = { newMode ->
+            logUserAction(TAG, "selected view mode", "newMode=$newMode")
+            onViewModeChange(newMode)
+        },
         menuItems = menuItems,
         headerTitle = "View Options",
-        onCloseDrawer = onCloseDrawer,
+        onCloseDrawer = {
+            debugLogD(TAG, "Closing drawer")
+            onCloseDrawer()
+        },
         modifier = modifier,
         itemContent = { item, isSelected, onClick ->
+            debugLogD(TAG, "Rendering drawer item: ${item.label}, selected=$isSelected")
             val iconRes = item.icon as? DrawableResource
             NavigationDrawerItem(
                 label = { Text(item.label) },
@@ -61,7 +75,10 @@ fun HomeDrawerContent(
                     { Icon(painterResource(res), contentDescription = item.label) }
                 },
                 selected = isSelected,
-                onClick = onClick,
+                onClick = {
+                    logUserAction(TAG, "clicked drawer item", item.label)
+                    onClick()
+                },
                 modifier = Modifier.padding(horizontal = 12.dp, vertical = 4.dp)
             )
         }

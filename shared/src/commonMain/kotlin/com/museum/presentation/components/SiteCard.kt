@@ -7,6 +7,10 @@ import androidx.compose.ui.unit.dp
 import com.museum.data.models.HeritageSite
 import com.museum.utils.getCardBackgroundColor
 import com.whitelabel.platform.presentation.components.GenericSiteCard
+import com.whitelabel.platform.utils.debugLogD
+import com.whitelabel.platform.utils.logUserAction
+
+private const val TAG = "SiteCard"
 
 /**
  * Museum-specific SiteCard that uses GenericSiteCard from whitelabel-platform
@@ -19,13 +23,21 @@ fun SiteCard(
     onFavoriteClick: () -> Unit,
     modifier: Modifier = Modifier
 ) {
+    debugLogD(TAG, "Rendering SiteCard for site ${site.id}: ${site.name}")
+    
     val imageUrl = site.imageUrl?.split(",")?.firstOrNull()?.trim()
     
     GenericSiteCard(
         item = site,
-        languageCode = "en", // Uses LanguagePreferences internally via getLocalizedName()
-        onClick = onClick,
-        onFavoriteClick = onFavoriteClick,
+        languageCode = "en",
+        onClick = {
+            logUserAction(TAG, "clicked site card", "siteId=${site.id}, name=${site.name}")
+            onClick()
+        },
+        onFavoriteClick = {
+            logUserAction(TAG, "clicked favorite", "siteId=${site.id}, currentFavorite=${site.isFavorite}")
+            onFavoriteClick()
+        },
         modifier = modifier,
         imageUrl = imageUrl,
         imageHeight = 120.dp,

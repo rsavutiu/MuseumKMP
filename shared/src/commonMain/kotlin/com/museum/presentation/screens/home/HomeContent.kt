@@ -7,6 +7,7 @@ import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.DisposableEffect
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import com.museum.data.models.HeritageSite
@@ -14,6 +15,10 @@ import com.museum.presentation.components.SiteCard
 import com.whitelabel.core.presentation.home.HomeUiState
 import com.whitelabel.core.presentation.home.ViewMode
 import com.whitelabel.platform.presentation.screens.home.HomeContent as PlatformHomeContent
+import com.whitelabel.platform.utils.debugLogD
+import com.whitelabel.platform.utils.logLifecycle
+
+private const val TAG = "HomeContent"
 
 /**
  * Museum-specific HomeContent that delegates to whitelabel-platform version
@@ -30,6 +35,22 @@ fun HomeContent(
     onClearFocusedSite: () -> Unit = {},
     modifier: Modifier = Modifier
 ) {
+    logLifecycle(TAG, "Composable entered, viewMode=$viewMode")
+    
+    DisposableEffect(uiState) {
+        when (uiState) {
+            is HomeUiState.Loading -> debugLogD(TAG, "State: Loading")
+            is HomeUiState.Empty -> debugLogD(TAG, "State: Empty (query='$searchQuery')")
+            is HomeUiState.Error -> debugLogD(TAG, "State: Error - ${uiState.message}")
+            is HomeUiState.Success<*> -> {
+                @Suppress("UNCHECKED_CAST")
+                val success = uiState as HomeUiState.Success<HeritageSite>
+                debugLogD(TAG, "State: Success - ${success.items.size} items, ${success.groups.size} groups")
+            }
+        }
+        onDispose { }
+    }
+
     PlatformHomeContent(
         uiState = uiState,
         viewMode = viewMode,
@@ -74,6 +95,5 @@ fun HomeContent(
 // Helper function to get current language code
 @Composable
 private fun getCurrentLanguageCode(): String {
-    // This should be replaced with actual language provider implementation
     return "en"
 }

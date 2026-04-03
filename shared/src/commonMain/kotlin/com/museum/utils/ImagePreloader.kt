@@ -3,8 +3,13 @@ package com.museum.utils
 import coil3.ImageLoader
 import coil3.PlatformContext
 import com.museum.data.models.HeritageSite
+import com.whitelabel.platform.utils.debugLogD
+import com.whitelabel.platform.utils.debugLogI
+import com.whitelabel.platform.utils.logImageLoad
 
-// Re-export from whitelabel-platform with museum-specific extensions
+private const val TAG = "ImagePreloader"
+
+// Re-export from whitelabel-platform with museum-specific extensions and logging
 
 class ImagePreloader(
     context: PlatformContext,
@@ -21,22 +26,38 @@ class ImagePreloader(
         currentIndex: Int,
         preloadCount: Int = 15
     ) {
-        // Use platform preloader with museum-specific extractors
+        val startIndex = currentIndex.coerceAtLeast(0)
         val endIndex = (currentIndex + preloadCount).coerceAtMost(sites.size - 1)
-        val itemsToPreload = sites.subList(currentIndex.coerceAtLeast(0), endIndex)
+        val actualCount = endIndex - startIndex
+        
+        debugLogD(TAG, "Preloading $actualCount images from index $startIndex to $endIndex")
+        
+        // Use platform preloader with museum-specific extractors
+        val itemsToPreload = sites.subList(startIndex, endIndex)
+        var preloadedCount = 0
+        var skippedCount = 0
         
         itemsToPreload.forEach { site ->
             val imageUrl = site.imageUrl?.split(",")?.firstOrNull()?.trim()
             if (!imageUrl.isNullOrBlank()) {
+                val cacheKey = getThumbnailCacheKey(site.id)
+                debugLogD(TAG, "Preloading image for site ${site.id}: $imageUrl")
                 platformPreloader.preloadImage(
                     imageUrl = imageUrl,
-                    cacheKey = getThumbnailCacheKey(site.id)
+                    cacheKey = cacheKey
                 )
+                preloadedCount++
+            } else {
+                debugLogD(TAG, "Skipping site ${site.id}, no image URL")
+                skippedCount++
             }
         }
+        
+        debugLogI(TAG, "Preload complete: $preloadedCount images loaded, $skippedCount skipped")
     }
 
     fun clearCache() {
+        debugLogD(TAG, "Clearing image cache")
         platformPreloader.clearCache()
     }
 }

@@ -5,8 +5,8 @@ import com.museum.domain.services.IosWallpaperService
 import com.museum.domain.services.WallpaperService
 import org.koin.dsl.module
 
-actual val platformModule = module {
-    // DatabaseDriverFactory - no dependencies
+actual val appPlatformModule = module {
+    // DatabaseDriverFactory - no dependencies on iOS
     single { DatabaseDriverFactory() }
 
     // WallpaperService - iOS implementation

@@ -8,6 +8,7 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.LocationOn
 import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.DisposableEffect
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -23,11 +24,16 @@ import com.museum.utils.getDrawableResourceId
 import com.museum.utils.getPrimaryColor
 import com.museum.utils.toDrawableResourceName
 import com.whitelabel.platform.presentation.screens.detail.GenericDetailScreen
+import com.whitelabel.platform.utils.debugLogD
+import com.whitelabel.platform.utils.logLifecycle
+import com.whitelabel.platform.utils.logUserAction
 import museumkmp.shared.generated.resources.Res
 import museumkmp.shared.generated.resources.fullscreen
 import museumkmp.shared.generated.resources.map
 import org.jetbrains.compose.resources.ExperimentalResourceApi
 import org.jetbrains.compose.resources.painterResource
+
+private const val TAG = "SiteDetailScreen"
 
 @OptIn(ExperimentalResourceApi::class)
 @Composable
@@ -37,21 +43,38 @@ fun SiteDetailScreen(
     onShowFullImage: (Long) -> Unit,
     onShowOnMap: (Long) -> Unit
 ) {
+    logLifecycle(TAG, "Composable entered")
+    
+    DisposableEffect(Unit) {
+        debugLogD(TAG, "SiteDetailScreen mounted")
+        onDispose {
+            debugLogD(TAG, "SiteDetailScreen unmounted")
+        }
+    }
+
     GenericDetailScreen(
         viewModel = viewModel,
-        onBackClick = onBackClick,
-        languageCode = "en", // TODO: Get from language provider
-        topBarColor = Color(0xFF1976D2), // Use a default primary color
+        onBackClick = {
+            logUserAction(TAG, "clicked back")
+            onBackClick()
+        },
+        languageCode = "en",
+        topBarColor = Color(0xFF1976D2),
         topBarContentColor = Color.White,
         floatingActionButton = { site ->
+            logLifecycle(TAG, "Rendering FAB for site ${site.id}")
             Column(
                 modifier = Modifier.padding(16.dp),
                 verticalArrangement = Arrangement.spacedBy(12.dp),
                 horizontalAlignment = Alignment.End
             ) {
                 if (site.latitude != null && site.longitude != null) {
+                    debugLogD(TAG, "Showing map FAB (lat=${site.latitude}, lng=${site.longitude})")
                     SmallFloatingActionButton(
-                        onClick = { onShowOnMap(site.id) }
+                        onClick = {
+                            logUserAction(TAG, "clicked show on map", "siteId=${site.id}")
+                            onShowOnMap(site.id)
+                        }
                     ) {
                         Icon(
                             painter = painterResource(Res.drawable.map),
@@ -60,7 +83,10 @@ fun SiteDetailScreen(
                     }
                 }
                 FloatingActionButton(
-                    onClick = { onShowFullImage(site.id) }
+                    onClick = {
+                        logUserAction(TAG, "clicked view fullscreen", "siteId=${site.id}")
+                        onShowFullImage(site.id)
+                    }
                 ) {
                     Icon(
                         painter = painterResource(Res.drawable.fullscreen),
@@ -70,6 +96,7 @@ fun SiteDetailScreen(
             }
         },
         content = { site, localizedGroupName ->
+            debugLogD(TAG, "Rendering content for site ${site.id}, group=$localizedGroupName")
             SiteDetailContent(
                 site = site,
                 localizedCountries = localizedGroupName ?: ""
