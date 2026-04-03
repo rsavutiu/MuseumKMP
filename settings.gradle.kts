@@ -4,6 +4,7 @@ include(":androidApp")
 include(":shared")
 
 includeBuild("whitelabel-core")
+includeBuild("whitelabel-platform")
 
 pluginManagement {
     repositories {
