@@ -1,5 +1,6 @@
 package com.museum.utils
 
+// Re-export from whitelabel-platform
 import co.touchlab.kermit.Logger as KermitLogger
 import co.touchlab.kermit.Severity
 
@@ -31,19 +32,20 @@ object Logger {
     }
 }
 
-// Convenience function for logging
+// Convenience function for logging - converts LogLevel and delegates to platform
 fun LOG(message: String, level: LogLevel = LogLevel.DEBUG) {
-    when (level) {
-        LogLevel.VERBOSE -> Logger.v(message)
-        LogLevel.DEBUG -> Logger.d(message)
-        LogLevel.INFO -> Logger.i(message)
-        LogLevel.WARN -> Logger.w(message)
-        LogLevel.ERROR -> Logger.e(message)
+    val platformLevel = when (level) {
+        LogLevel.VERBOSE -> com.whitelabel.platform.utils.LogLevel.VERBOSE
+        LogLevel.DEBUG -> com.whitelabel.platform.utils.LogLevel.DEBUG
+        LogLevel.INFO -> com.whitelabel.platform.utils.LogLevel.INFO
+        LogLevel.WARN -> com.whitelabel.platform.utils.LogLevel.WARN
+        LogLevel.ERROR -> com.whitelabel.platform.utils.LogLevel.ERROR
     }
+    com.whitelabel.platform.utils.LOG(message, platformLevel, "MuseumApp")
 }
 
 fun LOG(message: String, throwable: Throwable) {
-    Logger.e(message, throwable)
+    com.whitelabel.platform.utils.LOG(message, throwable, "MuseumApp")
 }
 
 enum class LogLevel {
@@ -54,8 +56,12 @@ enum class LogLevel {
     ERROR
 }
 
-// Performance monitoring utilities
-expect inline fun <T> measureTimeAndLog(tag: String, block: () -> T): T
+// Performance monitoring - delegates to platform
+inline fun <T> measureTimeAndLog(tag: String, block: () -> T): T {
+    return com.whitelabel.platform.utils.measureTimeAndLog(tag, block)
+}
 
-// Thread checker utility
-expect fun checkMainThread()
+// Thread checker - delegates to platform
+fun checkMainThread() {
+    com.whitelabel.platform.utils.checkMainThread()
+}

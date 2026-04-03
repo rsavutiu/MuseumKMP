@@ -2,73 +2,65 @@ package com.museum.utils
 
 import androidx.compose.ui.graphics.Color
 import com.museum.data.models.HeritageSite
+import com.whitelabel.platform.utils.toComposeColor as platformToComposeColor
+import com.whitelabel.platform.utils.blendColors as platformBlendColors
+import com.whitelabel.platform.utils.calculateCardBackgroundColor
 
 /**
  * Convert an ARGB integer to a Compose Color.
- * Handles null values by returning a default color.
+ * Extension function that delegates to platform utility.
  */
 fun Int?.toComposeColor(default: Color = Color.Gray): Color {
-    if (this == null) return default
-    return Color(this)
+    return platformToComposeColor(this, default)
 }
 
 /**
  * Blend two colors together with a given ratio.
- * @param color1 The first color
- * @param color2 The second color
- * @param ratio The ratio of color2 in the blend (0.0 to 1.0)
- * @return The blended color
  */
 fun blendColors(color1: Color, color2: Color, ratio: Float): Color {
-    val inverseRatio = 1f - ratio
-    return Color(
-        red = color1.red * inverseRatio + color2.red * ratio,
-        green = color1.green * inverseRatio + color2.green * ratio,
-        blue = color1.blue * inverseRatio + color2.blue * ratio,
-        alpha = color1.alpha * inverseRatio + color2.alpha * ratio
-    )
+    return platformBlendColors(color1, color2, ratio)
 }
 
 /**
  * Get the card background color for a HeritageSite.
- * Uses the blending formula from the old app:
- * blend(background, blend(primary, secondary, 0.75), 0.2)
+ * Uses the platform's calculateCardBackgroundColor with museum defaults.
  */
 fun HeritageSite.getCardBackgroundColor(): Color {
-    val primary = primaryColor.toComposeColor(Color(0xFFE0E0E0))
-    val secondary = secondaryColor.toComposeColor(primary)
-    val background = backgroundColor.toComposeColor(Color(0xFFF5F5F5))
-
-    // First blend primary and secondary with 0.75 ratio
-    val primarySecondaryBlend = blendColors(primary, secondary, 0.75f)
-
-    // Then blend the result with background with 0.2 ratio
-    return blendColors(background, primarySecondaryBlend, 0.2f)
+    return com.whitelabel.platform.utils.calculateCardBackgroundColor(
+        primaryColor = primaryColor,
+        secondaryColor = secondaryColor,
+        backgroundColor = backgroundColor,
+        defaultPrimary = Color(0xFFE0E0E0),
+        defaultSecondary = Color(0xFFBDBDBD),
+        defaultBackground = Color(0xFFF5F5F5),
+        primarySecondaryRatio = 0.75f,
+        finalBlendRatio = 0.2f
+    )
 }
 
 /**
- * Get the primary color for a HeritageSite, with a default fallback.
+ * Get the primary color for a HeritageSite.
  */
 fun HeritageSite.getPrimaryColor(default: Color = Color(0xFF6200EE)): Color {
     return primaryColor.toComposeColor(default)
 }
 
 /**
- * Get the secondary color for a HeritageSite, with a default fallback.
+ * Get the secondary color for a HeritageSite.
  */
 fun HeritageSite.getSecondaryColor(default: Color = Color(0xFF03DAC6)): Color {
     return secondaryColor.toComposeColor(default)
 }
 
 /**
- * Get the background color for a HeritageSite, with a default fallback.
+ * Get the background color for a HeritageSite.
  */
 fun HeritageSite.getBackgroundColor(default: Color = Color(0xFFF5F5F5)): Color {
     return backgroundColor.toComposeColor(default)
 }
 
 /**
- * Get the detail color for a HeritageSite, with a default fallback.
+ * Get the detail color for a HeritageSite.
  */
 fun HeritageSite.getDetailColor(default: Color = Color(0xFF6200EE)): Color {
     return detailColor.toComposeColor(default)
