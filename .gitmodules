@@ -1,3 +1,6 @@
 [submodule "whitelabel-core"]
 	path = whitelabel-core
 	url = https://github.com/rsavutiu/whitelabel-kmp-core.git
+[submodule "whitelabel-platform"]
+	path = whitelabel-platform
+	url = https://github.com/rsavutiu/whitelabel-platform.git
