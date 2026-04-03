@@ -11,6 +11,7 @@ import androidx.compose.runtime.DisposableEffect
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import com.museum.data.models.HeritageSite
+import com.museum.presentation.components.getSiteDrawableId
 import com.whitelabel.core.presentation.home.HomeUiState
 import com.whitelabel.core.presentation.home.ViewMode
 import com.whitelabel.platform.presentation.screens.home.HomeContent as PlatformHomeContent
@@ -61,6 +62,7 @@ fun HomeContent(
         onClearFocusedItem = onClearFocusedSite,
         modifier = modifier,
         gridColumns = 2,
+        drawableResourceIdProvider = { site -> getSiteDrawableId(site) },
         listHeader = {
             if (uiState is HomeUiState.Success<*>) {
                 @Suppress("UNCHECKED_CAST")

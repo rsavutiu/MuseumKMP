@@ -48,6 +48,7 @@ import com.whitelabel.platform.presentation.components.MapView
  * @param gridColumns Number of columns in grid view (default 2)
  * @param listHeader Optional composable for list header
  * @param groupHeader Optional composable for group headers
+ * @param drawableResourceIdProvider Optional function to provide Android drawable resource ID for items (prioritized over URLs)
  */
 @Composable
 fun <T : DisplayableItem> HomeContent(
@@ -62,7 +63,8 @@ fun <T : DisplayableItem> HomeContent(
     modifier: Modifier = Modifier,
     gridColumns: Int = 2,
     listHeader: @Composable (() -> Unit)? = null,
-    groupHeader: @Composable ((ItemGroup<T>) -> Unit)? = null
+    groupHeader: @Composable ((ItemGroup<T>) -> Unit)? = null,
+    drawableResourceIdProvider: @Composable ((T) -> Int?)? = null
 ) {
     when (uiState) {
         is HomeUiState.Loading -> {
@@ -121,7 +123,8 @@ fun <T : DisplayableItem> HomeContent(
                         modifier = modifier.fillMaxSize(),
                         gridColumns = gridColumns,
                         listHeader = listHeader,
-                        groupHeader = groupHeader
+                        groupHeader = groupHeader,
+                        drawableResourceIdProvider = drawableResourceIdProvider
                     )
                 }
             }
@@ -142,7 +145,8 @@ private fun <T : DisplayableItem> GridView(
     modifier: Modifier = Modifier,
     gridColumns: Int = 2,
     listHeader: @Composable (() -> Unit)? = null,
-    groupHeader: @Composable ((ItemGroup<T>) -> Unit)? = null
+    groupHeader: @Composable ((ItemGroup<T>) -> Unit)? = null,
+    drawableResourceIdProvider: @Composable ((T) -> Int?)? = null
 ) {
     val gridState = rememberLazyGridState()
     var initialLoadComplete by remember { mutableStateOf(false) }
@@ -191,12 +195,14 @@ private fun <T : DisplayableItem> GridView(
                     val onFavorite = remember(item) {
                         { onFavoriteClick(item) }
                     }
+                    val drawableId = drawableResourceIdProvider?.invoke(item)
                     GenericSiteCard(
                         item = item,
                         languageCode = languageCode,
                         onClick = { onItemClick(item.id) },
                         onFavoriteClick = onFavorite,
-                        modifier = Modifier.height(190.dp)
+                        modifier = Modifier.height(190.dp),
+                        drawableResourceId = drawableId
                     )
                 }
             }
