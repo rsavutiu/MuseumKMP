@@ -26,6 +26,7 @@ import com.whitelabel.core.domain.model.DisplayableItem
 /**
  * Generic card component for displaying any DisplayableItem.
  * Supports images, favorites, localization, and customizable styling.
+ * Prioritizes drawableResourceId over imageUrl if provided.
  *
  * @param item The item to display
  * @param languageCode Current language code for localization
@@ -33,6 +34,7 @@ import com.whitelabel.core.domain.model.DisplayableItem
  * @param onFavoriteClick Callback when the favorite button is clicked
  * @param modifier Modifier for the card
  * @param imageUrl Optional image URL override (uses item.imageUrls.first() by default)
+ * @param drawableResourceId Optional Android drawable resource ID (takes priority over URL)
  * @param imageHeight Height of the image area
  * @param cardColors Card color scheme
  * @param showFavorite Whether to show the favorite button
@@ -46,6 +48,7 @@ fun <T : DisplayableItem> GenericSiteCard(
     onFavoriteClick: () -> Unit,
     modifier: Modifier = Modifier,
     imageUrl: String? = null,
+    drawableResourceId: Int? = null,
     imageHeight: Dp = 120.dp,
     cardColors: CardColors = CardDefaults.cardColors(),
     showFavorite: Boolean = true,
@@ -63,8 +66,12 @@ fun <T : DisplayableItem> GenericSiteCard(
                 .fillMaxSize()
                 .padding(8.dp)
         ) {
-            // Image
-            val imageToLoad = imageUrl ?: item.imageUrls.firstOrNull()
+            // Image - prioritize drawableResourceId, then imageUrl, then item.imageUrls
+            val imageToLoad = when {
+                drawableResourceId != null && drawableResourceId != 0 -> drawableResourceId
+                imageUrl != null -> imageUrl
+                else -> item.imageUrls.firstOrNull()
+            }
             if (imageToLoad != null) {
                 Box(
                     modifier = Modifier
@@ -134,6 +141,7 @@ fun <T : DisplayableItem> GenericSiteCard(
 
 /**
  * Simplified card variant for grid layouts with fixed dimensions.
+ * Supports drawable resource IDs for local images.
  */
 @Composable
 fun <T : DisplayableItem> CompactSiteCard(
@@ -142,7 +150,8 @@ fun <T : DisplayableItem> CompactSiteCard(
     onClick: () -> Unit,
     onFavoriteClick: () -> Unit,
     modifier: Modifier = Modifier,
-    imageUrl: String? = null
+    imageUrl: String? = null,
+    drawableResourceId: Int? = null
 ) {
     GenericSiteCard(
         item = item,
@@ -151,6 +160,7 @@ fun <T : DisplayableItem> CompactSiteCard(
         onFavoriteClick = onFavoriteClick,
         modifier = modifier.height(190.dp),
         imageUrl = imageUrl,
+        drawableResourceId = drawableResourceId,
         imageHeight = 120.dp
     )
 }

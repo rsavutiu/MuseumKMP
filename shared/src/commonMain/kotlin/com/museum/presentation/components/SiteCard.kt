@@ -13,8 +13,16 @@ import com.whitelabel.platform.utils.logUserAction
 private const val TAG = "SiteCard"
 
 /**
+ * Get the drawable resource ID for a site.
+ * Platform-specific implementation (Android uses getDrawableIdForSite).
+ */
+@Composable
+expect fun getSiteDrawableId(site: HeritageSite): Int?
+
+/**
  * Museum-specific SiteCard that uses GenericSiteCard from whitelabel-platform
  * with museum-specific theming and image loading.
+ * Prioritizes local drawable resources over remote URLs.
  */
 @Composable
 fun SiteCard(
@@ -23,9 +31,10 @@ fun SiteCard(
     onFavoriteClick: () -> Unit,
     modifier: Modifier = Modifier
 ) {
-    debugLogD(TAG, "Rendering SiteCard for site ${site.id}: ${site.name}")
-    
+    val drawableId = getSiteDrawableId(site)
     val imageUrl = site.imageUrl?.split(",")?.firstOrNull()?.trim()
+    
+    debugLogD(TAG, "Rendering SiteCard for site ${site.id}: ${site.name}, drawableId=$drawableId, hasUrl=${imageUrl != null}")
     
     GenericSiteCard(
         item = site,
@@ -40,6 +49,7 @@ fun SiteCard(
         },
         modifier = modifier,
         imageUrl = imageUrl,
+        drawableResourceId = drawableId,
         imageHeight = 120.dp,
         cardColors = androidx.compose.material3.CardDefaults.cardColors(
             containerColor = site.getCardBackgroundColor()
