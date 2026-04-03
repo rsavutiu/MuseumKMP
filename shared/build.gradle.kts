@@ -29,6 +29,7 @@ kotlin {
         val commonMain by getting {
             dependencies {
                 api("com.whitelabel:core:0.1.0")
+                api("com.whitelabel:platform:0.1.0")
                 implementation(compose.runtime)
                 implementation(compose.foundation)
                 implementation(compose.material3)
@@ -55,14 +56,18 @@ kotlin {
 
         val androidMain by getting {
             dependencies {
+                // SQLDelight driver for this app's database
                 implementation(libs.sqldelight.driver.android)
-                implementation(libs.ktor.client.okhttp)
-                implementation(libs.ktor.client.logging)
-                implementation(libs.koin.android)
-                implementation(libs.koin.compose)
+                // Maps for this app's map view
                 implementation(libs.maps.compose)
                 implementation(libs.play.services.maps)
                 implementation(libs.maps.compose.utils)
+                // Ktor HTTP client
+                implementation(libs.ktor.client.okhttp)
+                implementation(libs.ktor.client.logging)
+                // Koin for Android
+                implementation(libs.koin.android)
+                implementation(libs.koin.compose)
             }
         }
 

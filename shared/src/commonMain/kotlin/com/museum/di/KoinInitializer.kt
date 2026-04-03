@@ -1,5 +1,6 @@
 package com.museum.di
 
+import com.whitelabel.platform.di.platformModule as whitelabelPlatformModule
 import org.koin.core.context.startKoin
 import org.koin.dsl.KoinAppDeclaration
 
@@ -8,6 +9,6 @@ fun initKoin(appDeclaration: KoinAppDeclaration = {}) = startKoin {
     modules(
         commonModule,
         viewModelModule,
-        platformModule
+        whitelabelPlatformModule
     )
 }
