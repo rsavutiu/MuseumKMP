@@ -22,11 +22,13 @@ import coil3.compose.AsyncImage
 import coil3.compose.LocalPlatformContext
 import coil3.request.ImageRequest
 import com.whitelabel.core.domain.model.DisplayableItem
+import com.whitelabel.platform.utils.ExtractedColors
 
 /**
  * Generic card component for displaying any DisplayableItem.
  * Supports images, favorites, localization, and customizable styling.
  * Prioritizes drawableResourceId over imageUrl if provided.
+ * Supports extracted colors from Palette API for dynamic card coloring.
  *
  * @param item The item to display
  * @param languageCode Current language code for localization
@@ -35,10 +37,11 @@ import com.whitelabel.core.domain.model.DisplayableItem
  * @param modifier Modifier for the card
  * @param imageUrl Optional image URL override (uses item.imageUrls.first() by default)
  * @param drawableResourceId Optional Android drawable resource ID (takes priority over URL)
+ * @param extractedColors Optional extracted colors from Palette API for dynamic coloring
  * @param imageHeight Height of the image area
- * @param cardColors Card color scheme
+ * @param cardColors Card color scheme (overridden by extractedColors if provided)
  * @param showFavorite Whether to show the favorite button
- * @param titleColor Color for the title text
+ * @param titleColor Color for the title text (overridden by extractedColors if provided)
  */
 @Composable
 fun <T : DisplayableItem> GenericSiteCard(
@@ -49,17 +52,35 @@ fun <T : DisplayableItem> GenericSiteCard(
     modifier: Modifier = Modifier,
     imageUrl: String? = null,
     drawableResourceId: Int? = null,
+    extractedColors: ExtractedColors? = null,
     imageHeight: Dp = 120.dp,
     cardColors: CardColors = CardDefaults.cardColors(),
     showFavorite: Boolean = true,
     titleColor: Color = Color.Unspecified
 ) {
+    // Use extracted colors if available, otherwise fall back to provided colors
+    val effectiveCardColors = if (extractedColors != null) {
+        CardDefaults.cardColors(
+            containerColor = extractedColors.getCardBackgroundColor()
+        )
+    } else {
+        cardColors
+    }
+    
+    val effectiveTitleColor = if (extractedColors != null) {
+        extractedColors.getTitleColor()
+    } else if (titleColor != Color.Unspecified) {
+        titleColor
+    } else {
+        LocalContentColor.current
+    }
+
     Card(
         modifier = modifier
             .fillMaxWidth()
             .clickable(onClick = onClick),
         elevation = CardDefaults.cardElevation(defaultElevation = 4.dp),
-        colors = cardColors
+        colors = effectiveCardColors
     ) {
         Column(
             modifier = Modifier
@@ -106,7 +127,7 @@ fun <T : DisplayableItem> GenericSiteCard(
                         fontWeight = FontWeight.Bold,
                         maxLines = 2,
                         overflow = TextOverflow.Ellipsis,
-                        color = if (titleColor != Color.Unspecified) titleColor else LocalContentColor.current
+                        color = effectiveTitleColor
                     )
 
                     item.getLocalizedCategory(languageCode)?.let { category ->
@@ -141,7 +162,7 @@ fun <T : DisplayableItem> GenericSiteCard(
 
 /**
  * Simplified card variant for grid layouts with fixed dimensions.
- * Supports drawable resource IDs for local images.
+ * Supports drawable resource IDs for local images and extracted colors.
  */
 @Composable
 fun <T : DisplayableItem> CompactSiteCard(
@@ -151,7 +172,8 @@ fun <T : DisplayableItem> CompactSiteCard(
     onFavoriteClick: () -> Unit,
     modifier: Modifier = Modifier,
     imageUrl: String? = null,
-    drawableResourceId: Int? = null
+    drawableResourceId: Int? = null,
+    extractedColors: ExtractedColors? = null
 ) {
     GenericSiteCard(
         item = item,
@@ -161,6 +183,7 @@ fun <T : DisplayableItem> CompactSiteCard(
         modifier = modifier.height(190.dp),
         imageUrl = imageUrl,
         drawableResourceId = drawableResourceId,
+        extractedColors = extractedColors,
         imageHeight = 120.dp
     )
 }

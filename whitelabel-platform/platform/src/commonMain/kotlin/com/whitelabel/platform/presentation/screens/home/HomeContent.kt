@@ -29,8 +29,10 @@ import com.whitelabel.core.domain.model.DisplayableItem
 import com.whitelabel.core.domain.model.ItemGroup
 import com.whitelabel.core.presentation.home.HomeUiState
 import com.whitelabel.core.presentation.home.ViewMode
+import com.whitelabel.platform.presentation.components.CompactSiteCard
 import com.whitelabel.platform.presentation.components.GenericSiteCard
 import com.whitelabel.platform.presentation.components.MapView
+import com.whitelabel.platform.utils.ExtractedColors
 
 /**
  * Generic home content screen that supports both Grid and Map view modes.
@@ -49,6 +51,7 @@ import com.whitelabel.platform.presentation.components.MapView
  * @param listHeader Optional composable for list header
  * @param groupHeader Optional composable for group headers
  * @param drawableResourceIdProvider Optional function to provide Android drawable resource ID for items (prioritized over URLs)
+ * @param colorExtractor Optional function to extract colors from items for dynamic card coloring (Android only)
  */
 @Composable
 fun <T : DisplayableItem> HomeContent(
@@ -64,7 +67,8 @@ fun <T : DisplayableItem> HomeContent(
     gridColumns: Int = 2,
     listHeader: @Composable (() -> Unit)? = null,
     groupHeader: @Composable ((ItemGroup<T>) -> Unit)? = null,
-    drawableResourceIdProvider: @Composable ((T) -> Int?)? = null
+    drawableResourceIdProvider: @Composable ((T) -> Int?)? = null,
+    colorExtractor: @Composable ((T) -> ExtractedColors?)? = null
 ) {
     when (uiState) {
         is HomeUiState.Loading -> {
@@ -124,7 +128,8 @@ fun <T : DisplayableItem> HomeContent(
                         gridColumns = gridColumns,
                         listHeader = listHeader,
                         groupHeader = groupHeader,
-                        drawableResourceIdProvider = drawableResourceIdProvider
+                        drawableResourceIdProvider = drawableResourceIdProvider,
+                        colorExtractor = colorExtractor
                     )
                 }
             }
@@ -146,7 +151,8 @@ private fun <T : DisplayableItem> GridView(
     gridColumns: Int = 2,
     listHeader: @Composable (() -> Unit)? = null,
     groupHeader: @Composable ((ItemGroup<T>) -> Unit)? = null,
-    drawableResourceIdProvider: @Composable ((T) -> Int?)? = null
+    drawableResourceIdProvider: @Composable ((T) -> Int?)? = null,
+    colorExtractor: @Composable ((T) -> ExtractedColors?)? = null
 ) {
     val gridState = rememberLazyGridState()
     var initialLoadComplete by remember { mutableStateOf(false) }
@@ -196,13 +202,14 @@ private fun <T : DisplayableItem> GridView(
                         { onFavoriteClick(item) }
                     }
                     val drawableId = drawableResourceIdProvider?.invoke(item)
-                    GenericSiteCard(
+                    val extractedColors = colorExtractor?.invoke(item)
+                    CompactSiteCard(
                         item = item,
                         languageCode = languageCode,
                         onClick = { onItemClick(item.id) },
                         onFavoriteClick = onFavorite,
-                        modifier = Modifier.height(190.dp),
-                        drawableResourceId = drawableId
+                        drawableResourceId = drawableId,
+                        extractedColors = extractedColors
                     )
                 }
             }

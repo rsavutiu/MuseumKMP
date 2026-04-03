@@ -8,6 +8,7 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.DisposableEffect
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import com.museum.data.models.HeritageSite
@@ -15,6 +16,7 @@ import com.museum.presentation.components.getSiteDrawableId
 import com.whitelabel.core.presentation.home.HomeUiState
 import com.whitelabel.core.presentation.home.ViewMode
 import com.whitelabel.platform.presentation.screens.home.HomeContent as PlatformHomeContent
+import com.whitelabel.platform.utils.ExtractedColors
 import com.whitelabel.platform.utils.debugLogD
 import com.whitelabel.platform.utils.logLifecycle
 
@@ -63,6 +65,12 @@ fun HomeContent(
         modifier = modifier,
         gridColumns = 2,
         drawableResourceIdProvider = { site -> getSiteDrawableId(site) },
+        colorExtractor = { site ->
+            val drawableId = getSiteDrawableId(site)
+            drawableId?.let { id ->
+                rememberExtractedColors(site.id, id)
+            }
+        },
         listHeader = {
             if (uiState is HomeUiState.Success<*>) {
                 @Suppress("UNCHECKED_CAST")

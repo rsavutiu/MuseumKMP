@@ -68,6 +68,8 @@ kotlin {
                 // Koin for Android
                 implementation(libs.koin.android)
                 implementation(libs.koin.compose)
+                // Palette API for color extraction
+                implementation("androidx.palette:palette:1.0.0")
             }
         }
 

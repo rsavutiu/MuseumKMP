@@ -55,6 +55,7 @@ kotlin {
                 implementation(libs.maps.compose)
                 implementation(libs.play.services.maps)
                 implementation(libs.maps.compose.utils)
+                implementation("androidx.palette:palette:1.0.0")
             }
         }
 
