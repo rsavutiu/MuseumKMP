@@ -1,42 +1,24 @@
 package com.museum.presentation.screens.home
 
-import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.PaddingValues
-import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.lazy.grid.GridCells
-import androidx.compose.foundation.lazy.grid.GridItemSpan
-import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
-import androidx.compose.foundation.lazy.grid.items
-import androidx.compose.foundation.lazy.grid.rememberLazyGridState
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.unit.dp
-import coil3.SingletonImageLoader
-import coil3.compose.LocalPlatformContext
 import com.museum.data.models.HeritageSite
-import com.museum.presentation.components.EmptyState
-import com.museum.presentation.components.LoadingIndicator
-import com.museum.presentation.components.MapView
 import com.museum.presentation.components.SiteCard
-import com.museum.utils.ImagePreloader
-import com.whitelabel.core.domain.model.ItemGroup
 import com.whitelabel.core.presentation.home.HomeUiState
 import com.whitelabel.core.presentation.home.ViewMode
+import com.whitelabel.platform.presentation.screens.home.HomeContent as PlatformHomeContent
 
+/**
+ * Museum-specific HomeContent that delegates to whitelabel-platform version
+ * with museum-specific components.
+ */
 @Composable
 fun HomeContent(
     uiState: HomeUiState,
@@ -48,127 +30,50 @@ fun HomeContent(
     onClearFocusedSite: () -> Unit = {},
     modifier: Modifier = Modifier
 ) {
-    when (uiState) {
-        is HomeUiState.Loading -> LoadingIndicator()
-        is HomeUiState.Empty -> EmptyState(
-            message = if (searchQuery.isBlank()) "No sites found" else "No results"
-        )
-        is HomeUiState.Error -> EmptyState(message = uiState.message)
-        is HomeUiState.Success<*> -> {
-            @Suppress("UNCHECKED_CAST")
-            val successState = uiState as HomeUiState.Success<HeritageSite>
-            when (viewMode) {
-                ViewMode.Map -> {
-                    MapView(
-                        sites = successState.items,
-                        focusedSiteId = focusedSiteId,
-                        onSiteClick = onSiteClick,
-                        onClearFocusedSite = onClearFocusedSite,
-                        modifier = modifier.fillMaxSize()
-                    )
-                }
-                ViewMode.Grid -> {
-                    GridViewWithPreloading(
-                        sites = successState.items,
-                        groups = successState.groups,
-                        onSiteClick = onSiteClick,
-                        onFavoriteClick = onFavoriteClick,
-                        modifier = modifier.fillMaxSize()
-                    )
-                }
-            }
-        }
-    }
-}
-
-@Composable
-private fun GridViewWithPreloading(
-    sites: List<HeritageSite>,
-    groups: List<ItemGroup<HeritageSite>>,
-    onSiteClick: (Long) -> Unit,
-    onFavoriteClick: (HeritageSite) -> Unit,
-    modifier: Modifier = Modifier
-) {
-    val context = LocalPlatformContext.current
-    val imageLoader = SingletonImageLoader.get(context)
-    val imagePreloader = remember(imageLoader) { ImagePreloader(context, imageLoader) }
-    val gridState = rememberLazyGridState()
-    var initialPreloadComplete by remember { mutableStateOf(false) }
-
-    // Preload only the first few images to avoid OOM
-    LaunchedEffect(sites) {
-        imagePreloader.preloadImages(
-            sites = sites,
-            currentIndex = 0,
-            preloadCount = 6  // Reduced from 12 to 6
-        )
-        initialPreloadComplete = true
-    }
-
-    if (!initialPreloadComplete) {
-        LoadingIndicator()
-    } else {
-        // Preload ahead as user scrolls, but keep it minimal
-        LaunchedEffect(gridState.firstVisibleItemIndex) {
-            val currentIndex = gridState.firstVisibleItemIndex
-            if (currentIndex > 0) {
-                imagePreloader.preloadImages(
-                    sites = sites,
-                    currentIndex = currentIndex + 6,
-                    preloadCount = 12  // Reduced from 40 to 12
-                )
-            }
-        }
-
-        LazyVerticalGrid(
-            state = gridState,
-            modifier = modifier,
-            columns = GridCells.Fixed(2),
-            contentPadding = PaddingValues(16.dp),
-            horizontalArrangement = Arrangement.spacedBy(12.dp),
-            verticalArrangement = Arrangement.spacedBy(12.dp)
-        ) {
-            val totalEntries = groups.sumOf { it.items.size }
-            item(span = { GridItemSpan(maxLineSpan) }) {
+    PlatformHomeContent(
+        uiState = uiState,
+        viewMode = viewMode,
+        languageCode = getCurrentLanguageCode(),
+        searchQuery = searchQuery,
+        focusedItemId = focusedSiteId,
+        onItemClick = onSiteClick,
+        onFavoriteClick = onFavoriteClick,
+        onClearFocusedItem = onClearFocusedSite,
+        modifier = modifier,
+        gridColumns = 2,
+        listHeader = {
+            if (uiState is HomeUiState.Success<*>) {
+                @Suppress("UNCHECKED_CAST")
+                val successState = uiState as HomeUiState.Success<HeritageSite>
+                val totalEntries = successState.groups.sumOf { it.items.size }
                 Text(
-                    text = "$totalEntries Heritage Sites (${sites.size} unique sites in ${groups.size} countries)",
+                    text = "$totalEntries Heritage Sites (${successState.items.size} unique sites in ${successState.groups.size} countries)",
                     style = MaterialTheme.typography.titleMedium,
                     modifier = Modifier.padding(bottom = 8.dp)
                 )
             }
-
-            groups.forEach { group ->
-                // Country header with divider
-                item(span = { GridItemSpan(maxLineSpan) }) {
-                    Column(
-                        modifier = Modifier.fillMaxWidth()
-                    ) {
-                        Text(
-                            text = "${group.displayName} (${group.items.size})",
-                            style = MaterialTheme.typography.headlineSmall,
-                            color = MaterialTheme.colorScheme.primary,
-                            modifier = Modifier.padding(top = 16.dp, bottom = 8.dp)
-                        )
-                        HorizontalDivider(
-                            modifier = Modifier.fillMaxWidth(),
-                            thickness = 1.dp,
-                            color = MaterialTheme.colorScheme.primary
-                        )
-                    }
-                }
-
-                // Sites for this country
-                items(items = group.items, key = { "${it.id}_${it.name}_${group.key}" }) { site ->
-                    val onFavorite = remember(site) {
-                        { onFavoriteClick(site) }
-                    }
-                    SiteCard(
-                        site = site,
-                        onClick = { onSiteClick(site.id) },
-                        onFavoriteClick = onFavorite
-                    )
-                }
+        },
+        groupHeader = { group ->
+            Column(modifier = Modifier.fillMaxWidth()) {
+                Text(
+                    text = "${group.displayName} (${group.items.size})",
+                    style = MaterialTheme.typography.headlineSmall,
+                    color = MaterialTheme.colorScheme.primary,
+                    modifier = Modifier.padding(top = 16.dp, bottom = 8.dp)
+                )
+                HorizontalDivider(
+                    modifier = Modifier.fillMaxWidth(),
+                    thickness = 1.dp,
+                    color = MaterialTheme.colorScheme.primary
+                )
             }
         }
-    }
+    )
+}
+
+// Helper function to get current language code
+@Composable
+private fun getCurrentLanguageCode(): String {
+    // This should be replaced with actual language provider implementation
+    return "en"
 }

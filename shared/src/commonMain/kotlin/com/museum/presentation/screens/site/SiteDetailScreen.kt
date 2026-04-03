@@ -22,7 +22,7 @@ import com.museum.utils.LOG
 import com.museum.utils.getDrawableResourceId
 import com.museum.utils.getPrimaryColor
 import com.museum.utils.toDrawableResourceName
-import com.whitelabel.core.presentation.detail.ItemDetailScreen
+import com.whitelabel.platform.presentation.screens.detail.GenericDetailScreen
 import museumkmp.shared.generated.resources.Res
 import museumkmp.shared.generated.resources.fullscreen
 import museumkmp.shared.generated.resources.map
@@ -37,12 +37,12 @@ fun SiteDetailScreen(
     onShowFullImage: (Long) -> Unit,
     onShowOnMap: (Long) -> Unit
 ) {
-    ItemDetailScreen(
+    GenericDetailScreen(
         viewModel = viewModel,
         onBackClick = onBackClick,
-        title = { it.getLocalizedName() },
-        topBarColor = { it.getPrimaryColor() },
-        topBarContentColor = { Color.White },
+        languageCode = "en", // TODO: Get from language provider
+        topBarColor = Color(0xFF1976D2), // Use a default primary color
+        topBarContentColor = Color.White,
         floatingActionButton = { site ->
             Column(
                 modifier = Modifier.padding(16.dp),

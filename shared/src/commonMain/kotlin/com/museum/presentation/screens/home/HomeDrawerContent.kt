@@ -1,17 +1,20 @@
 package com.museum.presentation.screens.home
 
-import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
-import androidx.compose.material3.*
+import androidx.compose.material3.Icon
+import androidx.compose.material3.NavigationDrawerItem
+import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import com.whitelabel.core.presentation.home.ViewMode
+import com.whitelabel.platform.presentation.screens.home.CatalogNavigationDrawer
+import com.whitelabel.platform.presentation.screens.home.DrawerMenuItem
 import museumkmp.shared.generated.resources.Res
-import museumkmp.shared.generated.resources.map
 import museumkmp.shared.generated.resources.grid_view
 import museumkmp.shared.generated.resources.language
+import museumkmp.shared.generated.resources.map
+import org.jetbrains.compose.resources.DrawableResource
 import org.jetbrains.compose.resources.ExperimentalResourceApi
 import org.jetbrains.compose.resources.painterResource
 
@@ -21,50 +24,46 @@ fun HomeDrawerContent(
     viewMode: ViewMode,
     onViewModeChange: (ViewMode) -> Unit,
     onLanguageClick: () -> Unit,
-    onCloseDrawer: () -> Unit
+    onCloseDrawer: () -> Unit,
+    modifier: Modifier = Modifier
 ) {
-    ModalDrawerSheet {
-        Spacer(modifier = Modifier.height(16.dp))
-        Text(
-            text = "View Options",
-            style = MaterialTheme.typography.headlineSmall,
-            modifier = Modifier.padding(16.dp)
+    val menuItems = listOf(
+        DrawerMenuItem(
+            label = "Grid View",
+            icon = Res.drawable.grid_view,
+            viewMode = ViewMode.Grid
+        ),
+        DrawerMenuItem(
+            label = "Map View",
+            icon = Res.drawable.map,
+            viewMode = ViewMode.Map
+        ),
+        DrawerMenuItem(
+            label = "Language",
+            icon = Res.drawable.language,
+            isAction = true,
+            onClick = onLanguageClick
         )
-        HorizontalDivider()
-        Spacer(modifier = Modifier.height(8.dp))
+    )
 
-        NavigationDrawerItem(
-            label = { Text("Grid View") },
-            icon = { Icon(painterResource(Res.drawable.grid_view), contentDescription = "Grid View") },
-            selected = viewMode == ViewMode.Grid,
-            onClick = {
-                onViewModeChange(ViewMode.Grid)
-                onCloseDrawer()
-            },
-            modifier = Modifier.padding(horizontal = 12.dp, vertical = 4.dp)
-        )
-        HorizontalDivider(modifier = Modifier.padding(horizontal = 16.dp))
-        NavigationDrawerItem(
-            label = { Text("Map View") },
-            icon = { Icon(painterResource(Res.drawable.map), contentDescription = "Map View") },
-            selected = viewMode == ViewMode.Map,
-            onClick = {
-                onViewModeChange(ViewMode.Map)
-                onCloseDrawer()
-            },
-            modifier = Modifier.padding(horizontal = 12.dp, vertical = 4.dp)
-        )
-        HorizontalDivider(modifier = Modifier.padding(horizontal = 16.dp))
-        NavigationDrawerItem(
-            label = { Text("Language") },
-            icon = { Icon(painterResource(resource = Res.drawable.language), contentDescription = "Language") },
-            selected = false,
-            onClick = {
-                onLanguageClick()
-                onCloseDrawer()
-            },
-            modifier = Modifier.padding(horizontal = 12.dp, vertical = 4.dp)
-        )
-        Spacer(modifier = Modifier.height(8.dp))
-    }
+    CatalogNavigationDrawer(
+        currentViewMode = viewMode,
+        onViewModeChange = onViewModeChange,
+        menuItems = menuItems,
+        headerTitle = "View Options",
+        onCloseDrawer = onCloseDrawer,
+        modifier = modifier,
+        itemContent = { item, isSelected, onClick ->
+            val iconRes = item.icon as? DrawableResource
+            NavigationDrawerItem(
+                label = { Text(item.label) },
+                icon = iconRes?.let { res ->
+                    { Icon(painterResource(res), contentDescription = item.label) }
+                },
+                selected = isSelected,
+                onClick = onClick,
+                modifier = Modifier.padding(horizontal = 12.dp, vertical = 4.dp)
+            )
+        }
+    )
 }
